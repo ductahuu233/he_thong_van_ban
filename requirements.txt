@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pytest
+python-multipart
+docxtpl
+python-docx
+pypdf
+httpx

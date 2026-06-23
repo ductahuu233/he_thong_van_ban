@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hệ thống hỗ trợ soạn thảo văn bản</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-[#f3f0e8] text-[#171717]">
+    <main class="mx-auto flex min-h-screen max-w-7xl flex-col px-3 py-4 sm:px-5 lg:px-7">
+      <header class="border border-[#d6c38a] bg-[#7f1d1d] text-white shadow-sm">
+        <div class="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div class="flex items-center gap-4">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#d4af37] bg-[#991b1b] text-lg font-bold text-[#ffe8a3]">
+              BCA
+            </div>
+            <div class="min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-[#f8e7b0]">Công cụ nghiệp vụ nội bộ</p>
+              <h1 class="mt-1 text-xl font-bold uppercase leading-tight sm:text-2xl">HỆ THỐNG HỖ TRỢ SOẠN THẢO VĂN BẢN</h1>
+              <p class="mt-1 text-sm text-red-50">Phục vụ tổng hợp, dự thảo và xuất văn bản hành chính</p>
+            </div>
+          </div>
+          <div class="border-t border-red-300/30 pt-3 text-left text-xs leading-5 text-red-50 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0 sm:text-right">
+            <p class="font-semibold uppercase text-[#ffe8a3]">Trạng thái hệ thống</p>
+            <p>SQLite cục bộ · Word mẫu Nghị định 30 · AI linh hoạt</p>
+          </div>
+        </div>
+        <div class="h-1 bg-[#d4af37]"></div>
+      </header>
+
+      <section class="grid flex-1 gap-4 py-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.9fr)]">
+        <form id="document-form" class="flex flex-col border border-[#d7d0bf] bg-[#fffdf8] shadow-sm">
+          <div class="border-b border-[#d7d0bf] bg-[#f8f3e7] px-4 py-3 sm:px-5">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#7f1d1d]">Phiếu nhập liệu</p>
+            <h2 class="mt-1 text-lg font-bold text-[#211f1c]">Thông tin văn bản</h2>
+          </div>
+
+          <div class="grid gap-4 p-4 sm:grid-cols-2 sm:p-5">
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Mẫu văn bản
+              <select name="template_type" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35">
+                <option value="default">Mẫu chung</option>
+                <option value="congvan">Công văn có bảng cán bộ</option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Loại văn bản
+              <input name="loai_van_ban" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Tờ trình, Công văn..." />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Số ký hiệu
+              <input name="so_ky_hieu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="01/TTr-..." />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Cơ quan ban hành
+              <input id="ten_co_quan" name="ten_co_quan" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Người ký
+              <input id="ten_giam_doc" name="nguoi_ky" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Chức vụ
+              <input id="chuc_vu" name="chuc_vu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Địa danh
+              <input name="dia_danh" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Hà Nội" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Đơn vị nhận
+              <input name="don_vi_nhan" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Phòng Công tác chính trị" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              Nơi lưu
+              <input name="noi_luu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="VT, Đ1" />
+            </label>
+            <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              File ngữ cảnh
+              <input name="context_file" type="file" accept=".txt,.pdf,.docx" class="h-11 border border-dashed border-[#bdb49f] bg-white px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-[#7f1d1d] file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white" />
+            </label>
+          </div>
+
+          <div class="border-t border-[#e2dbc9] p-4 sm:p-5">
+            <h3 class="mb-3 text-base font-bold text-[#7f1d1d]">Ngữ cảnh xử lý</h3>
+            <div class="grid gap-4">
+              <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+                Trích yếu
+                <input name="trich_yeu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Về việc..." />
+              </label>
+              <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+                Yêu cầu soạn thảo
+                <textarea name="user_request" rows="8" class="min-h-44 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Nhập yêu cầu, căn cứ, nội dung cần dự thảo..."></textarea>
+              </label>
+              <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+                Danh sách cán bộ
+                <textarea name="staff_list" rows="5" class="min-h-32 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Mỗi dòng: Họ tên | Năm sinh | Chức vụ | Ghi chú"></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-auto grid gap-3 border-t border-[#d7d0bf] bg-[#f8f3e7] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:p-5">
+            <button id="generate-button" type="submit" class="inline-flex min-h-12 items-center justify-center bg-[#7f1d1d] px-5 py-2 text-base font-bold uppercase tracking-wide text-white transition hover:bg-[#991b1b] disabled:cursor-not-allowed disabled:bg-stone-400">
+              Tự động soạn thảo
+            </button>
+            <button id="save-settings-button" type="button" class="inline-flex min-h-12 items-center justify-center border border-[#7f1d1d] bg-white px-5 py-2 text-base font-bold text-[#7f1d1d] transition hover:bg-[#fff4df] disabled:cursor-not-allowed disabled:border-stone-300 disabled:text-stone-400">
+              Lưu cấu hình
+            </button>
+          </div>
+        </form>
+
+        <aside class="flex min-h-[620px] flex-col border border-[#d7d0bf] bg-[#fffdf8] shadow-sm">
+          <div class="border-b border-[#d7d0bf] bg-[#211f1c] px-4 py-3 text-white sm:px-5">
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#f4d57d]">Kết quả xử lý</p>
+            <div class="mt-1 flex items-center justify-between gap-3">
+              <h2 class="text-lg font-bold">Dự thảo nội dung</h2>
+              <button id="copy-button" type="button" class="border border-[#d4af37] px-3 py-2 text-sm font-semibold text-[#f8e7b0] transition hover:bg-[#3a3328]">
+                Copy nội dung
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-1 flex-col gap-4 p-4 sm:p-5">
+            <pre id="preview-text" class="min-h-96 flex-1 whitespace-pre-wrap border border-[#d7d0bf] bg-white p-4 text-sm leading-6 text-[#211f1c]">Nội dung dự thảo sẽ hiển thị tại đây sau khi hệ thống xử lý.</pre>
+            <a id="download-link" href="#" class="inline-flex min-h-12 items-center justify-center bg-[#d4af37] px-5 py-2 text-base font-bold uppercase tracking-wide text-[#17130b] transition hover:bg-[#e0bd4f] aria-disabled:pointer-events-none aria-disabled:bg-stone-300 aria-disabled:text-stone-600" aria-disabled="true">
+              Tải file Word
+            </a>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
