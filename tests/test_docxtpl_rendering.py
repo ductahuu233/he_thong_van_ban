@@ -18,9 +18,32 @@ def test_render_docx_template(tmp_path):
     Tests the rendering of a docx template using docxtpl with sample data,
     verifying direct field replacement and table iteration.
     """
-    template_path = os.path.join("data", "template_congvan.docx")
-    output_file_name = "rendered_congvan_test.docx"
+    template_path = os.path.join("data", "template_test.docx")
+    output_file_name = "rendered_test.docx"
     output_path = tmp_path / output_file_name
+
+    # Dynamically create the test template
+    os.makedirs("data", exist_ok=True)
+    from docx.shared import Pt
+    doc_setup = Document()
+    style = doc_setup.styles["Normal"]
+    style.font.name = "Times New Roman"
+    style.font.size = Pt(13)
+    doc_setup.add_paragraph("{{ title }}")
+    doc_setup.add_paragraph("{{ name }}")
+    table = doc_setup.add_table(rows=4, cols=5)
+    table.style = "Table Grid"
+    headers = ["ID", "Description", "Quantity", "Price", "Notes"]
+    for i, title in enumerate(headers):
+        table.cell(0, i).text = title
+    table.cell(1, 0).text = "{%tr for item in items %}"
+    table.cell(2, 0).text = "{{ item.id }}"
+    table.cell(2, 1).text = "{{ item.description }}"
+    table.cell(2, 2).text = "{{ item.quantity }}"
+    table.cell(2, 3).text = "{{ item.price }}"
+    table.cell(2, 4).text = "{{ item.notes or '' }}"
+    table.cell(3, 0).text = "{%tr endfor %}"
+    doc_setup.save(template_path)
 
     # Check if the template file exists
     assert os.path.exists(template_path), f"Template file not found at {template_path}"
@@ -52,9 +75,6 @@ def test_render_docx_template(tmp_path):
     # Verify table iteration (check for descriptions of items)
     for item in sample_data["items"]:
         assert item["description"] in document_content
-        # You might also want to check for other fields like quantity or price if they are expected to be rendered in tables
         assert str(item["quantity"]) in document_content
         assert str(item["price"]) in document_content
 
-    # Optionally, you can add more specific checks if you know the exact structure
-    # For example, if you expect "Mục 1" to be in a specific table cell.

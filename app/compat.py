@@ -20,3 +20,7 @@ def apply_collections_compat() -> None:
         if not hasattr(collections, name) and hasattr(collections.abc, name):
             setattr(collections, name, getattr(collections.abc, name))
 
+
+apply_collections_compat()
+
+

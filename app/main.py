@@ -255,6 +255,8 @@ async def generate_document(
 
     return {
         "preview_html": preview_html,
+        "preview_text": preview_text,
         "file_url": f"/outputs/{output_path.name}",
         "file_name": output_path.name,
     }
+

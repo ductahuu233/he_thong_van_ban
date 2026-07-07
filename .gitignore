@@ -5,3 +5,7 @@ __pycache__/
 uvicorn*.log
 data/app.db
 outputs/*.docx
+data/template_test.docx
+.pytest_basetemp/
+
+
