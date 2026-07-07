@@ -122,6 +122,8 @@ def render_congvan_document(data: dict) -> Path:
     template_path = ensure_congvan_template()
     today = datetime.now()
     staff = data.get("danh_sach_can_bo", [])
+
+    # Ensure context has all keys used by the Word template.
     context = {
         "co_quan": data.get("co_quan", ""),
         "don_vi_soan_thao": data.get("don_vi_soan_thao", data.get("co_quan", "")),
@@ -141,8 +143,21 @@ def render_congvan_document(data: dict) -> Path:
         "noi_luu": data.get("noi_luu", "VT"),
         "chuc_vu_nguoi_ky": data.get("chuc_vu_nguoi_ky", data.get("chuc_vu", "")),
         "nguoi_ky": data.get("nguoi_ky", ""),
+        # also used by default template footer/table texts
+        "doan_ket_thuc": data.get("doan_ket_thuc", ""),
     }
-    return render_template_to_output(template_path, context, prefix="cong-van")
+
+    try:
+        return render_template_to_output(template_path, context, prefix="cong-van")
+    except ValueError as exc:
+        # Word template might be an older/broken docx (Jinja tag mismatch like missing endfor).
+        # Rebuild template and retry once.
+        msg = str(exc).lower()
+        if "unexpected end of template" in msg or "endfor" in msg:
+            template_path = ensure_congvan_template()
+            return render_template_to_output(template_path, context, prefix="cong-van")
+        raise
+
 
 
 def render_template_to_output(template_path: Path, context: dict, prefix: str) -> Path:

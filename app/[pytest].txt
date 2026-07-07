@@ -1,0 +1,2 @@
+[pytest]
+tmpdir_factory = C:\Users\admin\.gemini\tmp\tahuuduc\pytest-tmp

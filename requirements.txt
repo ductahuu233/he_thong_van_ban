@@ -7,3 +7,5 @@ docxtpl
 python-docx
 pypdf
 httpx
+pydocx
+lxml

@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Hệ thống hỗ trợ soạn thảo văn bản</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .docx-preview {
+        background: white;
+        border: 1px solid #d7d0bf;
+        padding: 2.5rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 13pt;
+        line-height: 1.5;
+        color: #000;
+        min-height: 960px;
+        overflow-y: auto;
+      }
+      .docx-preview p { margin-bottom: 0.5em; }
+      .docx-preview table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+      .docx-preview td, .docx-preview th { border: 1px solid #555; padding: 4px 8px; }
+      .docx-preview ul { list-style-position: inside; }
+      .docx-preview ol { list-style-position: inside; }
+    </style>
   </head>
   <body class="min-h-screen bg-[#f3f0e8] text-[#171717]">
     <main class="mx-auto flex min-h-screen max-w-7xl flex-col px-3 py-4 sm:px-5 lg:px-7">
@@ -75,15 +94,29 @@
               Nơi lưu
               <input name="noi_luu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="VT, Đ1" />
             </label>
+          <div class="sm:col-span-2">
             <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
               File ngữ cảnh
               <input name="context_file" type="file" accept=".txt,.pdf,.docx" class="h-11 border border-dashed border-[#bdb49f] bg-white px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-[#7f1d1d] file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white" />
             </label>
           </div>
+          </div>
 
           <div class="border-t border-[#e2dbc9] p-4 sm:p-5">
-            <h3 class="mb-3 text-base font-bold text-[#7f1d1d]">Ngữ cảnh xử lý</h3>
-            <div class="grid gap-4">
+            <h3 class="mb-3 text-base font-bold text-[#7f1d1d]">Nội dung văn bản</h3>
+            
+            <div class="mb-4 flex gap-4">
+              <label class="flex items-center gap-2 text-sm font-semibold">
+                <input type="radio" name="generation_mode" value="ai" class="h-4 w-4 border-gray-300 text-red-800 focus:ring-red-600" checked>
+                Dùng AI tạo nội dung
+              </label>
+              <label class="flex items-center gap-2 text-sm font-semibold">
+                <input type="radio" name="generation_mode" value="manual" class="h-4 w-4 border-gray-300 text-red-800 focus:ring-red-600">
+                Tự nhập nội dung
+              </label>
+            </div>
+
+            <div id="ai-fields" class="grid gap-4">
               <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
                 Trích yếu
                 <input name="trich_yeu" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Về việc..." />
@@ -97,11 +130,19 @@
                 <textarea name="staff_list" rows="5" class="min-h-32 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Mỗi dòng: Họ tên | Năm sinh | Chức vụ | Ghi chú"></textarea>
               </label>
             </div>
+            
+            <div id="manual-fields" class="hidden">
+                <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+                  Nội dung chi tiết
+                  <textarea name="manual_content" rows="15" class="min-h-44 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Nhập toàn bộ nội dung của văn bản vào đây..."></textarea>
+                </label>
+            </div>
+
           </div>
 
           <div class="mt-auto grid gap-3 border-t border-[#d7d0bf] bg-[#f8f3e7] p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:p-5">
             <button id="generate-button" type="submit" class="inline-flex min-h-12 items-center justify-center bg-[#7f1d1d] px-5 py-2 text-base font-bold uppercase tracking-wide text-white transition hover:bg-[#991b1b] disabled:cursor-not-allowed disabled:bg-stone-400">
-              Tự động soạn thảo
+              Tạo văn bản
             </button>
             <button id="save-settings-button" type="button" class="inline-flex min-h-12 items-center justify-center border border-[#7f1d1d] bg-white px-5 py-2 text-base font-bold text-[#7f1d1d] transition hover:bg-[#fff4df] disabled:cursor-not-allowed disabled:border-stone-300 disabled:text-stone-400">
               Lưu cấu hình
@@ -121,7 +162,9 @@
           </div>
 
           <div class="flex flex-1 flex-col gap-4 p-4 sm:p-5">
-            <pre id="preview-text" class="min-h-96 flex-1 whitespace-pre-wrap border border-[#d7d0bf] bg-white p-4 text-sm leading-6 text-[#211f1c]">Nội dung dự thảo sẽ hiển thị tại đây sau khi hệ thống xử lý.</pre>
+            <div id="preview-container" class="docx-preview">
+              <p>Nội dung dự thảo sẽ hiển thị tại đây sau khi hệ thống xử lý.</p>
+            </div>
             <a id="download-link" href="#" class="inline-flex min-h-12 items-center justify-center bg-[#d4af37] px-5 py-2 text-base font-bold uppercase tracking-wide text-[#17130b] transition hover:bg-[#e0bd4f] aria-disabled:pointer-events-none aria-disabled:bg-stone-300 aria-disabled:text-stone-600" aria-disabled="true">
               Tải file Word
             </a>
