@@ -353,6 +353,53 @@ validateFormAndToggleGenerate();
 form.addEventListener("input", () => validateFormAndToggleGenerate());
 form.addEventListener("change", () => validateFormAndToggleGenerate());
 
+function formatPreviewHtml(htmlString) {
+  if (!htmlString) return "";
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, "text/html");
+
+  const tables = doc.querySelectorAll("table");
+  tables.forEach((table) => {
+    const text = table.textContent;
+    // Kiểm tra xem là bảng tiêu ngữ (header) hay bảng chữ ký/nơi nhận (footer) để ẩn viền
+    const isLayoutTable = 
+      text.includes("CONG HOA XA HOI") || 
+      text.includes("CỘNG HÒA XÃ HỘI") || 
+      text.includes("Noi nhan:") || 
+      text.includes("Nơi nhận:") ||
+      text.includes("So:") ||
+      text.includes("Số:");
+
+    if (isLayoutTable) {
+      table.removeAttribute("border");
+      table.style.border = "none";
+      table.style.width = "100%";
+      table.style.marginBottom = "1.5em";
+      table.style.borderCollapse = "collapse";
+      
+      const cells = table.querySelectorAll("td, th");
+      cells.forEach((cell) => {
+        cell.style.border = "none";
+        cell.style.padding = "4px 8px";
+        cell.style.verticalAlign = "top";
+      });
+    } else {
+      // Đây là bảng danh sách cán bộ / bảng dữ liệu cần có viền
+      table.style.borderCollapse = "collapse";
+      table.style.width = "100%";
+      table.style.marginBottom = "1.5em";
+      
+      const cells = table.querySelectorAll("td, th");
+      cells.forEach((cell) => {
+        cell.style.border = "1px solid #000";
+        cell.style.padding = "6px 8px";
+      });
+    }
+  });
+
+  return doc.body.innerHTML;
+}
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   // Chặn nếu thiếu trường
@@ -377,7 +424,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     const result = await response.json();
-    previewText.innerHTML = result.preview_html || "<p>Không có nội dung xem trước.</p>";
+    previewText.innerHTML = formatPreviewHtml(result.preview_html) || "<p>Không có nội dung xem trước.</p>";
     previewText.dataset.text = previewText.textContent;
     setDownloadLink(result.file_url || "", result.file_name || "");
   } catch (error) {
