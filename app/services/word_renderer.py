@@ -22,15 +22,50 @@ def ensure_default_template() -> Path:
 
     document = Document()
     set_document_defaults(document)
-    document.add_paragraph("{{ co_quan }}")
-    document.add_paragraph("Số: {{ so_ky_hieu }}")
+
+    # 1. Header table (2 columns)
+    header = document.add_table(rows=1, cols=2)
+    header.autofit = True
+    left = header.cell(0, 0)
+    right = header.cell(0, 1)
+    
+    # Left: Agency Name and Document Code
+    left.text = "{{ co_quan }}\n-------------------\nSố: {{ so_ky_hieu }}"
+    # Right: National motto and date
+    right.text = "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n-----------------------\n{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}"
+
+    for cell in (left, right):
+        for paragraph in cell.paragraphs:
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
     document.add_paragraph("")
+    
+    # 2. Document type and subject
     title = document.add_paragraph()
-    title.add_run("{{ trich_yeu }}").bold = True
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_type = title.add_run("{{ loai_van_ban }}\n")
+    run_type.bold = True
+    run_type.font.size = Pt(14)
+    run_subject = title.add_run("{{ trich_yeu }}")
+    run_subject.bold = True
+    
     document.add_paragraph("")
+
+    # 3. Content body
     document.add_paragraph("{{ noi_dung_ai_viet }}")
+
     document.add_paragraph("")
-    document.add_paragraph("Người ký: {{ nguoi_ky }}")
+
+    # 4. Footer table
+    footer = document.add_table(rows=1, cols=2)
+    footer.cell(0, 0).text = "Nơi nhận:\n- Như trên;\n- Lưu: {{ noi_luu }}."
+    footer.cell(0, 1).text = "{{ chuc_vu_nguoi_ky }}\n\n\n{{ nguoi_ky }}"
+    
+    for paragraph in footer.cell(0, 1).paragraphs:
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        for run in paragraph.runs:
+            run.bold = True
+
     document.save(TEMPLATE_PATH)
     return TEMPLATE_PATH
 
@@ -105,17 +140,22 @@ def render_word_document(data: dict) -> Path:
         return render_congvan_document(data)
 
     template_path = ensure_default_template()
-    return render_template_to_output(
-        template_path,
-        {
-            "co_quan": data.get("co_quan", ""),
-            "so_ky_hieu": data.get("so_ky_hieu", ""),
-            "trich_yeu": data.get("trich_yeu", ""),
-            "noi_dung_ai_viet": data.get("noi_dung_ai_viet", ""),
-            "nguoi_ky": data.get("nguoi_ky", ""),
-        },
-        prefix="van-ban",
-    )
+    today = datetime.now()
+    context = {
+        "co_quan": data.get("co_quan", ""),
+        "so_ky_hieu": data.get("so_ky_hieu", ""),
+        "dia_danh": data.get("dia_danh", ""),
+        "ngay": data.get("ngay", f"{today.day:02d}"),
+        "thang": data.get("thang", f"{today.month:02d}"),
+        "nam": data.get("nam", str(today.year)),
+        "loai_van_ban": data.get("loai_van_ban", ""),
+        "trich_yeu": data.get("trich_yeu", ""),
+        "noi_dung_ai_viet": data.get("noi_dung_ai_viet", ""),
+        "noi_luu": data.get("noi_luu", "VT"),
+        "chuc_vu_nguoi_ky": data.get("chuc_vu_nguoi_ky", data.get("chuc_vu", "")),
+        "nguoi_ky": data.get("nguoi_ky", ""),
+    }
+    return render_template_to_output(template_path, context, prefix="van-ban")
 
 
 def render_congvan_document(data: dict) -> Path:

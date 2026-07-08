@@ -82,6 +82,22 @@ def get_or_create_settings(db: Session) -> UserSettings:
         db.add(settings)
         db.commit()
         db.refresh(settings)
+    
+    modified = False
+    if not settings.ten_co_quan:
+        settings.ten_co_quan = "HỘI ĐỒNG NHÂN DÂN THÀNH PHỐ HÀ NỘI"
+        modified = True
+    if not settings.ten_giam_doc:
+        settings.ten_giam_doc = "Phùng Thị Hồng Hà"
+        modified = True
+    if not settings.chuc_vu:
+        settings.chuc_vu = "CHỦ TỊCH"
+        modified = True
+        
+    if modified:
+        db.commit()
+        db.refresh(settings)
+        
     return settings
 
 

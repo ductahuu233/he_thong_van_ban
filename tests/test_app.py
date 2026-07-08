@@ -34,9 +34,9 @@ def test_get_settings_returns_default_settings(tmp_path):
     assert response.status_code == 200
     assert response.json() == {
         "id": 1,
-        "ten_co_quan": "",
-        "ten_giam_doc": "",
-        "chuc_vu": "",
+        "ten_co_quan": "HỘI ĐỒNG NHÂN DÂN THÀNH PHỐ HÀ NỘI",
+        "ten_giam_doc": "Phùng Thị Hồng Hà",
+        "chuc_vu": "CHỦ TỊCH",
     }
 
 
