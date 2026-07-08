@@ -358,6 +358,9 @@ function formatPreviewHtml(htmlString) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(htmlString, "text/html");
 
+  const loaiVanBan = document.querySelector('input[name="loai_van_ban"]')?.value.trim();
+  const trichYeu = document.querySelector('input[name="trich_yeu"]')?.value.trim();
+
   const tables = doc.querySelectorAll("table");
   tables.forEach((table) => {
     const text = table.textContent;
@@ -429,7 +432,26 @@ function formatPreviewHtml(htmlString) {
     const text = p.textContent.trim();
     if (!text) return;
 
-    // 1. Căn cứ pháp lý -> In nghiêng, không thụt đầu dòng
+    // A. Nếu paragraph chứa Loại văn bản hoặc Trích yếu -> Căn giữa, in đậm, không thụt dòng
+    const isTitle = loaiVanBan && (text.toLowerCase() === loaiVanBan.toLowerCase() || text.toUpperCase() === loaiVanBan.toUpperCase());
+    const isSubject = trichYeu && (text.includes(trichYeu) || trichYeu.includes(text));
+
+    if (isTitle || isSubject) {
+      p.style.textIndent = "0";
+      p.style.textAlign = "center";
+      p.style.fontWeight = "bold";
+      p.style.fontSize = isTitle ? "14pt" : "13pt";
+      p.style.marginTop = "0.5em";
+      p.style.marginBottom = "0.5em";
+      p.style.lineHeight = "1.3";
+      
+      if (isTitle) {
+        p.style.textTransform = "uppercase";
+      }
+      return;
+    }
+
+    // B. Căn cứ pháp lý -> In nghiêng, không thụt đầu dòng
     if (text.startsWith("Căn cứ") || text.startsWith("Căn cứ ")) {
       p.style.fontStyle = "italic";
       p.style.textIndent = "0";
@@ -438,7 +460,7 @@ function formatPreviewHtml(htmlString) {
       return;
     }
 
-    // 2. Tên loại văn bản in hoa đậm ở giữa -> Không thụt đầu dòng
+    // C. Tên loại văn bản in hoa đậm ở giữa -> Không thụt đầu dòng
     const isUppercaseTitle = text === text.toUpperCase() && text.length > 5;
     const isCenteredText = p.classList.contains("pydocx-center") || p.style.textAlign === "center";
     
@@ -449,13 +471,61 @@ function formatPreviewHtml(htmlString) {
       return;
     }
 
-    // 3. Các đoạn nội dung thông thường -> Thụt đầu dòng 1.27cm, căn đều 2 bên
+    // D. Các đoạn nội dung thông thường -> Thụt đầu dòng 1.27cm, căn đều 2 bên
     p.style.textIndent = "1.27cm";
     p.style.textAlign = "justify";
     p.style.lineHeight = "1.5";
   });
 
   return doc.body.innerHTML;
+}
+
+function addPageDividers() {
+  const existing = previewText.querySelectorAll(".page-break-divider");
+  existing.forEach(el => el.remove());
+
+  previewText.style.position = "relative";
+  const totalHeightPx = previewText.scrollHeight;
+
+  const dummy = document.createElement("div");
+  dummy.style.height = "297mm";
+  dummy.style.visibility = "hidden";
+  dummy.style.position = "absolute";
+  previewText.appendChild(dummy);
+  const pageHeightPx = dummy.offsetHeight;
+  previewText.removeChild(dummy);
+
+  if (!pageHeightPx || pageHeightPx <= 0) return;
+  const numPages = Math.ceil(totalHeightPx / pageHeightPx);
+  
+  for (let i = 1; i < numPages; i++) {
+    const divider = document.createElement("div");
+    divider.className = "page-break-divider";
+    divider.style.position = "absolute";
+    divider.style.left = "0";
+    divider.style.right = "0";
+    divider.style.top = `${i * pageHeightPx}px`;
+    divider.style.borderTop = "2px dashed #a8a090";
+    divider.style.height = "0";
+    divider.style.pointerEvents = "none";
+    divider.style.zIndex = "10";
+    
+    const label = document.createElement("span");
+    label.textContent = `Hết Trang ${i} / Sang Trang ${i + 1}`;
+    label.style.position = "absolute";
+    label.style.right = "20px";
+    label.style.top = "-10px";
+    label.style.background = "#fffdf8";
+    label.style.padding = "2px 8px";
+    label.style.fontSize = "9pt";
+    label.style.color = "#8b7e66";
+    label.style.fontFamily = "sans-serif";
+    label.style.border = "1px solid #c8bfa8";
+    label.style.borderRadius = "4px";
+    
+    divider.appendChild(label);
+    previewText.appendChild(divider);
+  }
 }
 
 form.addEventListener("submit", async (event) => {
@@ -484,6 +554,7 @@ form.addEventListener("submit", async (event) => {
     const result = await response.json();
     previewText.innerHTML = formatPreviewHtml(result.preview_html) || "<p>Không có nội dung xem trước.</p>";
     previewText.dataset.text = previewText.textContent;
+    addPageDividers();
     setDownloadLink(result.file_url || "", result.file_name || "");
   } catch (error) {
     previewText.textContent = error.message;
