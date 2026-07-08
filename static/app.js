@@ -382,7 +382,30 @@ function formatPreviewHtml(htmlString) {
         cell.style.border = "none";
         cell.style.padding = "4px 8px";
         cell.style.verticalAlign = "top";
+        
+        // Thay thế các đường gạch nối (---) thành đường kẻ mảnh thực tế
+        cell.innerHTML = cell.innerHTML.replace(/----+/g, '<div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>');
       });
+
+      // Nếu là bảng footer (chứa chữ ký), chúng ta chèn con dấu đè lên ô bên phải
+      if (text.includes("noi_luu") || text.includes("Nơi nhận:") || text.includes("Người ký") || text.includes("nguoi_ky")) {
+        const rightCell = table.rows[0]?.cells[1];
+        if (rightCell) {
+          rightCell.style.position = "relative";
+          const stampImg = document.createElement("img");
+          stampImg.src = "/static/stamp.jpg";
+          stampImg.style.position = "absolute";
+          stampImg.style.width = "110px";
+          stampImg.style.height = "110px";
+          stampImg.style.opacity = "0.75";
+          stampImg.style.mixBlendMode = "multiply";
+          stampImg.style.top = "10px";
+          stampImg.style.left = "25px";
+          stampImg.style.pointerEvents = "none";
+          stampImg.style.zIndex = "5";
+          rightCell.appendChild(stampImg);
+        }
+      }
     } else {
       // Đây là bảng danh sách cán bộ / bảng dữ liệu cần có viền
       table.style.borderCollapse = "collapse";
@@ -395,6 +418,41 @@ function formatPreviewHtml(htmlString) {
         cell.style.padding = "6px 8px";
       });
     }
+  });
+
+  // Xử lý căn lề, in nghiêng cho các đoạn văn bản (P) ngoài bảng
+  const paragraphs = doc.querySelectorAll("p");
+  paragraphs.forEach((p) => {
+    // Không thụt đầu dòng các đoạn văn nằm trong bảng
+    if (p.closest("table")) return;
+
+    const text = p.textContent.trim();
+    if (!text) return;
+
+    // 1. Căn cứ pháp lý -> In nghiêng, không thụt đầu dòng
+    if (text.startsWith("Căn cứ") || text.startsWith("Căn cứ ")) {
+      p.style.fontStyle = "italic";
+      p.style.textIndent = "0";
+      p.style.textAlign = "justify";
+      p.style.marginBottom = "0.25em";
+      return;
+    }
+
+    // 2. Tên loại văn bản in hoa đậm ở giữa -> Không thụt đầu dòng
+    const isUppercaseTitle = text === text.toUpperCase() && text.length > 5;
+    const isCenteredText = p.classList.contains("pydocx-center") || p.style.textAlign === "center";
+    
+    if (isUppercaseTitle || isCenteredText) {
+      p.style.textIndent = "0";
+      p.style.textAlign = "center";
+      p.style.fontWeight = "bold";
+      return;
+    }
+
+    // 3. Các đoạn nội dung thông thường -> Thụt đầu dòng 1.27cm, căn đều 2 bên
+    p.style.textIndent = "1.27cm";
+    p.style.textAlign = "justify";
+    p.style.lineHeight = "1.5";
   });
 
   return doc.body.innerHTML;
