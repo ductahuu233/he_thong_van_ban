@@ -211,7 +211,7 @@ def _build_render_context(form_data: GenerationRequest, preview_text: str) -> di
         "don_vi_nhan": form_data.don_vi_nhan,
         "doan_mo_dau": preview_text,
         "doan_noi_dung_1": "",
-        "doan_ket_thuc": f"{form_data.ten_co_quan} trao doi de tong hop, bao cao lanh dao theo quy dinh./.",
+        "doan_ket_thuc": f"{form_data.ten_co_quan} trao đổi để tổng hợp, báo cáo lãnh đạo theo quy định./.",
         "danh_sach_can_bo": parse_staff_list(form_data.staff_list),
         "noi_luu": form_data.noi_luu,
         "chuc_vu_nguoi_ky": form_data.chuc_vu,

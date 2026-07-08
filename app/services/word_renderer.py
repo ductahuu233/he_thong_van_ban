@@ -23,14 +23,14 @@ def ensure_default_template() -> Path:
     document = Document()
     set_document_defaults(document)
     document.add_paragraph("{{ co_quan }}")
-    document.add_paragraph("So: {{ so_ky_hieu }}")
+    document.add_paragraph("Số: {{ so_ky_hieu }}")
     document.add_paragraph("")
     title = document.add_paragraph()
     title.add_run("{{ trich_yeu }}").bold = True
     document.add_paragraph("")
     document.add_paragraph("{{ noi_dung_ai_viet }}")
     document.add_paragraph("")
-    document.add_paragraph("Nguoi ky: {{ nguoi_ky }}")
+    document.add_paragraph("Người ký: {{ nguoi_ky }}")
     document.save(TEMPLATE_PATH)
     return TEMPLATE_PATH
 
@@ -47,8 +47,8 @@ def ensure_congvan_template() -> Path:
     header.autofit = True
     left = header.cell(0, 0)
     right = header.cell(0, 1)
-    left.text = "{{ co_quan }}\n{{ don_vi_soan_thao }}\n-------------------\nSo: {{ so_ky_hieu }}\nV/v {{ trich_yeu }}"
-    right.text = "CONG HOA XA HOI CHU NGHIA VIET NAM\nDoc lap - Tu do - Hanh phuc\n-----------------------\n{{ dia_danh }}, ngay {{ ngay }} thang {{ thang }} nam {{ nam }}"
+    left.text = "{{ co_quan }}\n{{ don_vi_soan_thao }}\n-------------------\nSố: {{ so_ky_hieu }}\nV/v {{ trich_yeu }}"
+    right.text = "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n-----------------------\n{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}"
 
     for cell in (left, right):
         for paragraph in cell.paragraphs:
@@ -57,15 +57,15 @@ def ensure_congvan_template() -> Path:
     document.add_paragraph("")
     recipient = document.add_paragraph()
     recipient.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    recipient.add_run("Kinh gui: {{ don_vi_nhan }}.").bold = True
+    recipient.add_run("Kính gửi: {{ don_vi_nhan }}.").bold = True
 
     document.add_paragraph("{{ doan_mo_dau }}")
     document.add_paragraph("{{ doan_noi_dung_1 }}")
-    document.add_paragraph("2. Ve viec cu can bo tham gia hoat dong: {{ don_vi_soan_thao }} cu {{ so_luong_cb }} dong chi co ten sau:")
+    document.add_paragraph("2. Về việc cử cán bộ tham gia hoạt động: {{ don_vi_soan_thao }} cử {{ so_luong_cb }} đồng chí có tên sau:")
 
     table = document.add_table(rows=4, cols=5)
     table.style = "Table Grid"
-    headers = ["TT", "Ho va ten", "Nam sinh", "Chuc vu", "Ghi chu"]
+    headers = ["TT", "Họ và tên", "Năm sinh", "Chức vụ", "Ghi chú"]
     for index, title in enumerate(headers):
         run = table.cell(0, index).paragraphs[0].add_run(title)
         run.bold = True
@@ -82,7 +82,7 @@ def ensure_congvan_template() -> Path:
     document.add_paragraph("{{ doan_ket_thuc }}")
 
     footer = document.add_table(rows=1, cols=2)
-    footer.cell(0, 0).text = "Noi nhan:\n- Nhu tren {{ ghi_chu_noi_nhan }};\n- Luu: {{ noi_luu }}."
+    footer.cell(0, 0).text = "Nơi nhận:\n- Như trên {{ ghi_chu_noi_nhan }};\n- Lưu: {{ noi_luu }}."
     footer.cell(0, 1).text = "{{ chuc_vu_nguoi_ky }}\n\n\n{{ nguoi_ky }}"
     for paragraph in footer.cell(0, 1).paragraphs:
         paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER

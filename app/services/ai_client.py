@@ -122,22 +122,22 @@ def build_offline_draft(context_text: str, user_request: str) -> str:
         context_summary = f"{context_summary[:1200].rstrip()}..."
 
     parts = [
-        "Kinh gui: Cac don vi, ca nhan co lien quan.",
+        "Kính gửi: Các đơn vị, cá nhân có liên quan.",
         "",
-        f"Can cu yeu cau: {user_request.strip() or 'Soan thao van ban hanh chinh theo thong tin da cung cap.'}",
+        f"Căn cứ yêu cầu: {user_request.strip() or 'Soạn thảo văn bản hành chính theo thông tin đã cung cấp.'}",
     ]
     if context_summary:
-        parts.extend(["", "Thong tin ngu canh:", context_summary])
+        parts.extend(["", "Thông tin ngữ cảnh:", context_summary])
 
     parts.extend(
         [
             "",
-            "Noi dung de xuat:",
-            "1. Ghi nhan noi dung, pham vi va muc dich xu ly theo yeu cau neu tren.",
-            "2. De nghi cac bo phan lien quan phoi hop ra soat, cung cap thong tin va trien khai dung tien do.",
-            "3. Trong qua trinh thuc hien, neu phat sinh kho khan, kip thoi bao cao nguoi co tham quyen de xem xet, chi dao.",
+            "Nội dung đề xuất:",
+            "1. Ghi nhận nội dung, phạm vi và mục đích xử lý theo yêu cầu nêu trên.",
+            "2. Đề nghị các bộ phận liên quan phối hợp rà soát, cung cấp thông tin và triển khai đúng tiến độ.",
+            "3. Trong quá trình thực hiện, nếu phát sinh khó khăn, kịp thời báo cáo người có thẩm quyền để xem xét, chỉ đạo.",
             "",
-            "Tran trong.",
+            "Trân trọng./.",
         ]
     )
     return "\n".join(parts)
