@@ -219,6 +219,7 @@ def _build_render_context(form_data: GenerationRequest, preview_text: str) -> di
 
     return {
         "template_type": form_data.template_type,
+        "loai_van_ban": form_data.loai_van_ban,
         "co_quan": form_data.ten_co_quan,
         "don_vi_soan_thao": form_data.ten_co_quan,
         "so_ky_hieu": form_data.so_ky_hieu,

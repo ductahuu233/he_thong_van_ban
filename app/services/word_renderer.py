@@ -30,13 +30,38 @@ def ensure_default_template() -> Path:
     right = header.cell(0, 1)
     
     # Left: Agency Name and Document Code
-    left.text = "{{ co_quan }}\n-------------------\nSố: {{ so_ky_hieu }}"
-    # Right: National motto and date
-    right.text = "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n-----------------------\n{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}"
+    p_left1 = left.paragraphs[0]
+    p_left1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cq = p_left1.add_run("{{ co_quan }}")
+    run_cq.bold = True
+    
+    p_left2 = left.add_paragraph()
+    p_left2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left2.add_run("-------------------")
+    
+    p_left3 = left.add_paragraph()
+    p_left3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left3.add_run("Số: {{ so_ky_hieu }}")
 
-    for cell in (left, right):
-        for paragraph in cell.paragraphs:
-            paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    # Right: National motto and date
+    p_right1 = right.paragraphs[0]
+    p_right1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_qh = p_right1.add_run("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM")
+    run_qh.bold = True
+    
+    p_right2 = right.add_paragraph()
+    p_right2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_tn = p_right2.add_run("Độc lập - Tự do - Hạnh phúc")
+    run_tn.bold = True
+    
+    p_right3 = right.add_paragraph()
+    p_right3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_right3.add_run("-----------------------")
+    
+    p_right4 = right.add_paragraph()
+    p_right4.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_date = p_right4.add_run("{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}")
+    run_date.italic = True
 
     document.add_paragraph("")
     
@@ -59,12 +84,21 @@ def ensure_default_template() -> Path:
     # 4. Footer table
     footer = document.add_table(rows=1, cols=2)
     footer.cell(0, 0).text = "Nơi nhận:\n- Như trên;\n- Lưu: {{ noi_luu }}."
-    footer.cell(0, 1).text = "{{ chuc_vu_nguoi_ky }}\n\n\n{{ nguoi_ky }}"
     
-    for paragraph in footer.cell(0, 1).paragraphs:
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        for run in paragraph.runs:
-            run.bold = True
+    # Right footer: Signer and Name
+    r_foot = footer.cell(0, 1)
+    p_foot1 = r_foot.paragraphs[0]
+    p_foot1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cv = p_foot1.add_run("{{ chuc_vu_nguoi_ky }}")
+    run_cv.bold = True
+    
+    r_foot.add_paragraph("")
+    r_foot.add_paragraph("")
+    
+    p_foot2 = r_foot.add_paragraph()
+    p_foot2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_nk = p_foot2.add_run("{{ nguoi_ky }}")
+    run_nk.bold = True
 
     document.save(TEMPLATE_PATH)
     return TEMPLATE_PATH
@@ -78,12 +112,50 @@ def ensure_congvan_template() -> Path:
     document = Document()
     set_document_defaults(document)
 
+    # 1. Header table (2 columns)
     header = document.add_table(rows=1, cols=2)
     header.autofit = True
     left = header.cell(0, 0)
     right = header.cell(0, 1)
-    left.text = "{{ co_quan }}\n{{ don_vi_soan_thao }}\n-------------------\nSố: {{ so_ky_hieu }}\nV/v {{ trich_yeu }}"
-    right.text = "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc\n-----------------------\n{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}"
+    
+    # Left: Agency Name and Document Code
+    p_left1 = left.paragraphs[0]
+    p_left1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cq = p_left1.add_run("{{ co_quan }}")
+    run_cq.bold = True
+    
+    p_left2 = left.add_paragraph()
+    p_left2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_dv = p_left2.add_run("{{ don_vi_soan_thao }}")
+    run_dv.bold = True
+    
+    p_left3 = left.add_paragraph()
+    p_left3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left3.add_run("-------------------")
+    
+    p_left4 = left.add_paragraph()
+    p_left4.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left4.add_run("Số: {{ so_ky_hieu }}\nV/v {{ trich_yeu }}")
+
+    # Right: National motto and date
+    p_right1 = right.paragraphs[0]
+    p_right1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_qh = p_right1.add_run("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM")
+    run_qh.bold = True
+    
+    p_right2 = right.add_paragraph()
+    p_right2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_tn = p_right2.add_run("Độc lập - Tự do - Hạnh phúc")
+    run_tn.bold = True
+    
+    p_right3 = right.add_paragraph()
+    p_right3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_right3.add_run("-----------------------")
+    
+    p_right4 = right.add_paragraph()
+    p_right4.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_date = p_right4.add_run("{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}")
+    run_date.italic = True
 
     for cell in (left, right):
         for paragraph in cell.paragraphs:
@@ -118,11 +190,20 @@ def ensure_congvan_template() -> Path:
 
     footer = document.add_table(rows=1, cols=2)
     footer.cell(0, 0).text = "Nơi nhận:\n- Như trên {{ ghi_chu_noi_nhan }};\n- Lưu: {{ noi_luu }}."
-    footer.cell(0, 1).text = "{{ chuc_vu_nguoi_ky }}\n\n\n{{ nguoi_ky }}"
-    for paragraph in footer.cell(0, 1).paragraphs:
-        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        for run in paragraph.runs:
-            run.bold = True
+    
+    r_foot = footer.cell(0, 1)
+    p_foot1 = r_foot.paragraphs[0]
+    p_foot1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cv = p_foot1.add_run("{{ chuc_vu_nguoi_ky }}")
+    run_cv.bold = True
+    
+    r_foot.add_paragraph("")
+    r_foot.add_paragraph("")
+    
+    p_foot2 = r_foot.add_paragraph()
+    p_foot2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_nk = p_foot2.add_run("{{ nguoi_ky }}")
+    run_nk.bold = True
 
     document.save(CONGVAN_TEMPLATE_PATH)
     return CONGVAN_TEMPLATE_PATH
