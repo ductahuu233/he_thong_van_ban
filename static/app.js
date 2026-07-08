@@ -259,10 +259,13 @@ function collectRequiredFields() {
   const mode = document.querySelector('input[name="generation_mode"]:checked')?.value || "ai";
   if (mode === "ai") {
     requiredNames.push("user_request");
-    requiredNames.push("staff_list");
   } else {
     requiredNames.push("manual_content");
-    // staff_list vẫn là bắt buộc
+  }
+
+  // staff_list chỉ bắt buộc khi dùng mẫu congvan có bảng cán bộ
+  const templateType = document.querySelector('select[name="template_type"]')?.value || "default";
+  if (templateType === "congvan") {
     requiredNames.push("staff_list");
   }
 
@@ -325,11 +328,6 @@ function validateFormAndToggleGenerate() {
     if (!v) missing.push(name);
   });
 
-  // chuẩn hoá người ký ngay trước khi bật nút (client)
-  const nguoiKyEl = document.querySelector("#ten_giam_doc");
-  if (nguoiKyEl) {
-    nguoiKyEl.value = normalizeVietnameseNameClient(nguoiKyEl.value);
-  }
   if (missing.length) {
     generateButton.setAttribute("disabled", "true");
     return false;
@@ -337,6 +335,15 @@ function validateFormAndToggleGenerate() {
 
   generateButton.removeAttribute("disabled");
   return true;
+}
+
+// Chuẩn hoá người ký khi người dùng hoàn thành nhập và di chuột ra ngoài (blur)
+const nguoiKyEl = document.querySelector("#ten_giam_doc");
+if (nguoiKyEl) {
+  nguoiKyEl.addEventListener("blur", () => {
+    nguoiKyEl.value = normalizeVietnameseNameClient(nguoiKyEl.value);
+    validateFormAndToggleGenerate();
+  });
 }
 
 // Init state
