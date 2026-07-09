@@ -826,3 +826,18 @@ loadSettings().then(() => {
 }).catch((error) => {
   previewText.textContent = error.message;
 });
+
+// Zoom Slider Logic
+const zoomSlider = document.getElementById("zoom-slider");
+const zoomValue = document.getElementById("zoom-value");
+if (zoomSlider && zoomValue) {
+  zoomSlider.addEventListener("input", () => {
+    const val = zoomSlider.value;
+    zoomValue.textContent = `${val}%`;
+    const preview = document.getElementById("preview-container");
+    if (preview) {
+      preview.style.zoom = val / 100;
+    }
+  });
+}
+

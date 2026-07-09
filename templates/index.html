@@ -174,7 +174,15 @@ Nghị quyết này đã được Hội đồng nhân dân thành phố Hà Nộ
             </div>
           </div>
 
-          <div class="docx-preview-container gap-4">
+          <div class="docx-preview-container gap-4 relative">
+            <!-- Floating Zoom Control -->
+            <div class="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-[#c8bfa8]/40 bg-white/80 px-3 py-1.5 shadow-md backdrop-blur-md">
+              <span class="text-xs font-semibold text-[#5c5343] select-none">Thu nhỏ</span>
+              <input type="range" id="zoom-slider" min="50" max="150" value="100" class="h-1.5 w-24 cursor-pointer appearance-none rounded-lg bg-stone-200 accent-[#7f1d1d]" />
+              <span class="text-xs font-semibold text-[#5c5343] select-none">Phóng to</span>
+              <span id="zoom-value" class="ml-1 text-xs font-bold text-[#7f1d1d] min-w-[36px] text-right">100%</span>
+            </div>
+
             <div id="preview-container" class="docx-preview my-2">
               <p class="text-stone-500 italic">Nội dung dự thảo sẽ hiển thị tại đây sau khi hệ thống xử lý.</p>
             </div>
