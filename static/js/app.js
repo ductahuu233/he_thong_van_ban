@@ -115,6 +115,9 @@ function setDownloadLink(url, fileName = "") {
     downloadLink.removeAttribute("download");
 
 
+    downloadLink.textContent = "Nhấn 'Tạo văn bản' để tải Word";
+
+
     return;
 
 
@@ -137,6 +140,9 @@ function setDownloadLink(url, fileName = "") {
 
 
   }
+
+
+  downloadLink.textContent = "Tải file Word (.docx)";
 
 
 }
