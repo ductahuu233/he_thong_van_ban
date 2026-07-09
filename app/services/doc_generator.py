@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt
+from docx.shared import Pt, Inches, Inches
 from docxtpl import DocxTemplate
 
 from app.core.config import TEMPLATE_PATH, CONGVAN_TEMPLATE_PATH, QUYETDINH_TEMPLATE_PATH, OUTPUT_DIR
@@ -20,9 +20,13 @@ def ensure_default_template() -> Path:
 
     # 1. Header table (2 columns)
     header = document.add_table(rows=1, cols=2)
-    header.autofit = True
+    header.autofit = False
+    header.columns[0].width = Inches(2.1)
+    header.columns[1].width = Inches(4.4)
     left = header.cell(0, 0)
     right = header.cell(0, 1)
+    left.width = Inches(2.1)
+    right.width = Inches(4.4)
     
     # Left: Agency Name and Document Code
     p_left1 = left.paragraphs[0]
@@ -109,9 +113,13 @@ def ensure_congvan_template() -> Path:
 
     # 1. Header table (2 columns)
     header = document.add_table(rows=1, cols=2)
-    header.autofit = True
+    header.autofit = False
+    header.columns[0].width = Inches(2.1)
+    header.columns[1].width = Inches(4.4)
     left = header.cell(0, 0)
     right = header.cell(0, 1)
+    left.width = Inches(2.1)
+    right.width = Inches(4.4)
     
     # Left: Agency Name and Document Code
     p_left1 = left.paragraphs[0]
@@ -246,9 +254,13 @@ def ensure_quyetdinh_template() -> Path:
 
     # 1. Header table (2 columns)
     header = document.add_table(rows=1, cols=2)
-    header.autofit = True
+    header.autofit = False
+    header.columns[0].width = Inches(2.1)
+    header.columns[1].width = Inches(4.4)
     left = header.cell(0, 0)
     right = header.cell(0, 1)
+    left.width = Inches(2.1)
+    right.width = Inches(4.4)
     
     # Left: Agency Name and Document Code
     p_left1 = left.paragraphs[0]

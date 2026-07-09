@@ -675,13 +675,13 @@ function renderLivePreview() {
   let headerHtml = `
     <table style="border: none; width: 100%; border-collapse: collapse; margin-bottom: 1.5em;">
       <tr>
-        <td style="border: none; width: 45%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
+        <td style="border: none; width: 33%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>${coQuan}</strong>
           ${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}<br/>
           <span style="display: inline-block; border-top: 1.5px solid black; width: 60px; margin: 4px 0; vertical-align: middle;"></span><br/>
           Số: ${soKyHieu}
         </td>
-        <td style="border: none; width: 55%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
+        <td style="border: none; width: 67%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
           <strong>Độc lập - Tự do - Hạnh phúc</strong><br/>
           <span style="display: inline-block; border-top: 1.5px solid black; width: 140px; margin: 4px 0; vertical-align: middle;"></span><br/>
