@@ -752,9 +752,9 @@ function renderLivePreview() {
       const lines = manualContent.split("\n");
       lines.forEach(line => {
         if (line.trim().startsWith("Căn cứ")) {
-          bodyHtml += \`<p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">${line.trim()}</p>\`;
+          bodyHtml += `<p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">${line.trim()}</p>`;
         } else {
-          bodyHtml += \`<p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">${line.trim()}</p>\`;
+          bodyHtml += `<p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">${line.trim()}</p>`;
         }
       });
     } else {
