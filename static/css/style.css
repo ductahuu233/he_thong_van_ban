@@ -1,6 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+/* Reset and Global Styles */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #f7f6f2;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 0%, rgba(127, 29, 29, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%);
+  color: #1a1917;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1ede4;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8bfa8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #ab9e84;
+}
+
+/* Card layout wrapper */
+.premium-card {
+  border-radius: 12px;
+  border: 1px solid #e5dfd0;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(165, 155, 135, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.premium-card:hover {
+  box-shadow: 0 8px 30px rgba(165, 155, 135, 0.15);
+}
+
+/* Form input custom styling */
+input[type="text"], 
+input[type="file"], 
+select, 
+textarea {
+  border-radius: 6px !important;
+  border: 1.5px solid #d0c8b6 !important;
+  background-color: #fdfdfb !important;
+  color: #211f1b !important;
+  font-size: 0.925rem !important;
+  font-weight: 500 !important;
+  padding: 0.65rem 0.85rem !important;
+  transition: all 0.2s ease-in-out !important;
+  outline: none !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02) !important;
+}
+
+input[type="text"]:focus, 
+select:focus, 
+textarea:focus {
+  border-color: #7f1d1d !important;
+  background-color: #ffffff !important;
+  box-shadow: 
+    0 0 0 3px rgba(127, 29, 29, 0.12),
+    inset 0 1px 2px rgba(0,0,0,0.02) !important;
+}
+
+/* Interactive elements */
+button {
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.02em !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+}
+
+#generate-button {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%) !important;
+  box-shadow: 0 4px 10px rgba(127, 29, 29, 0.2) !important;
+  color: #ffffff !important;
+}
+
+#generate-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(127, 29, 29, 0.3), 0 0 0 1px #7f1d1d !important;
+}
+
+#generate-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+#generate-button:disabled {
+  background: #cbd5e1 !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+#save-settings-button {
+  background: #ffffff !important;
+  border: 1.5px solid #7f1d1d !important;
+  color: #7f1d1d !important;
+}
+
+#save-settings-button:hover:not(:disabled) {
+  background: #fff5f5 !important;
+  transform: translateY(-1px);
+}
+
+#copy-button {
+  background: transparent !important;
+  border: 1px solid #d4af37 !important;
+  color: #ffe8a3 !important;
+  border-radius: 4px !important;
+  font-size: 0.85rem !important;
+  padding: 0.4rem 0.8rem !important;
+}
+
+#copy-button:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* A4 Page layout system */
 .docx-preview-container {
-  background: #eae6dc;
-  padding: 1.5rem;
+  background-color: #eae6dc;
+  background-image: 
+    radial-gradient(#c8bfa8 1px, transparent 1px),
+    radial-gradient(#c8bfa8 1px, #eae6dc 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  padding: 2.5rem 1.5rem;
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -20,25 +154,29 @@
 }
 
 .docx-preview {
-  background: white;
+  background: #ffffff;
   border: 1px solid #c8bfa8;
   padding: 20mm 15mm 20mm 30mm; /* Lề chuẩn Nghị định 30: Trên 20mm, Phải 15mm, Dưới 20mm, Trái 30mm */
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.1),
+    0 1px 3px rgba(0,0,0,0.05);
   font-size: 13pt;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #000;
   width: 210mm;
   min-height: 297mm;
   box-sizing: border-box;
   text-align: justify;
-  flex-shrink: 0; /* Ngăn chặn co rút trên màn hình nhỏ hoặc phân chia cột */
+  flex-shrink: 0;
 }
 
 .docx-preview p {
-  margin-bottom: 0.5em;
-  line-height: 1.5;
+  margin-bottom: 0.35em;
+  line-height: 1.45;
+  text-indent: 0; /* Default reset */
 }
 
+/* Custom styling for standard administrative components */
 .docx-preview table {
   border-collapse: collapse;
   width: 100%;
@@ -48,22 +186,44 @@
 .docx-preview td,
 .docx-preview th {
   border: 1px solid #000;
-  padding: 4px 8px;
+  padding: 5px 8px;
   font-size: 12pt;
 }
 
-.docx-preview ul {
-  list-style-position: inside;
-}
-
+.docx-preview ul,
 .docx-preview ol {
   list-style-position: inside;
+  margin-bottom: 0.5em;
 }
 
-/* Giao diện co giãn linh hoạt trên màn hình di động */
+/* Download Link styling */
+#download-link {
+  border-radius: 6px !important;
+  background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%) !important;
+  box-shadow: 0 4px 10px rgba(170, 140, 44, 0.25) !important;
+  color: #17130b !important;
+  font-weight: 700 !important;
+  transition: all 0.2s ease !important;
+}
+
+#download-link:hover:not([aria-disabled="true"]) {
+  background: linear-gradient(135deg, #e5bd44 0%, #c4a132 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(170, 140, 44, 0.35) !important;
+}
+
+#download-link[aria-disabled="true"] {
+  background: #cbd5e1 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Responsive Scaling for small screens */
 @media (max-width: 1024px) {
   .docx-preview-container {
     padding: 0.75rem;
+    background-size: 10px 10px;
   }
   .docx-preview {
     width: 100%;
