@@ -544,12 +544,15 @@ function addPageDividers() {
   }
 }
 
+let triggerDownloadAfterGenerate = false;
+
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   // Chặn nếu thiếu trường
   const ok = validateFormAndToggleGenerate();
   if (!ok) {
     previewText.textContent = "Vui lòng nhập đầy đủ tất cả các trường bắt buộc trước khi tạo văn bản.";
+    triggerDownloadAfterGenerate = false;
     return;
   }
 
@@ -573,10 +576,31 @@ form.addEventListener("submit", async (event) => {
     previewText.dataset.generated = "true"; // Đánh dấu đã sinh thật
     addPageDividers();
     setDownloadLink(result.file_url || "", result.file_name || "");
+
+    if (triggerDownloadAfterGenerate) {
+      triggerDownloadAfterGenerate = false;
+      setTimeout(() => {
+        downloadLink.click();
+      }, 100);
+    }
   } catch (error) {
     previewText.textContent = error.message;
+    triggerDownloadAfterGenerate = false;
   } finally {
     generateButton.disabled = false;
+  }
+});
+
+// Thêm sự kiện click cho downloadLink để tự động tạo và tải khi chưa có sẵn file
+downloadLink.addEventListener("click", (event) => {
+  if (downloadLink.getAttribute("aria-disabled") === "true" || downloadLink.getAttribute("href") === "#") {
+    event.preventDefault();
+    triggerDownloadAfterGenerate = true;
+    if (form.requestSubmit) {
+      form.requestSubmit();
+    } else {
+      form.dispatchEvent(new Event("submit"));
+    }
   }
 });
 
