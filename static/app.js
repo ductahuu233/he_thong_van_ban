@@ -677,7 +677,7 @@ function renderLivePreview() {
       <tr>
         <td style="border: none; width: 45%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>${coQuan}</strong>
-          \${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}
+          ${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}
           <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
           Số: ${soKyHieu}
         </td>
@@ -685,7 +685,7 @@ function renderLivePreview() {
           <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
           <strong>Độc lập - Tự do - Hạnh phúc</strong>
           <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
-          <span style="font-style: italic;">\${dateStr}</span>
+          <span style="font-style: italic;">${dateStr}</span>
         </td>
       </tr>
     </table>
@@ -695,7 +695,7 @@ function renderLivePreview() {
   let bodyHtml = "";
   if (templateType === "congvan") {
     bodyHtml += `
-      <p style="text-align: center; font-weight: bold; margin-bottom: 1.5em; text-indent: 0;">Kính gửi: \${donViNhan}.</p>
+      <p style="text-align: center; font-weight: bold; margin-bottom: 1.5em; text-indent: 0;">Kính gửi: ${donViNhan}.</p>
       <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">Về việc cử cán bộ tham gia hoạt động: cử các đồng chí có tên sau đây:</p>
       <table style="border-collapse: collapse; width: 100%; margin: 1em 0 1.5em 0;">
         <thead>
@@ -717,11 +717,11 @@ function renderLivePreview() {
         const parts = line.split("|").map(p => p.trim());
         bodyHtml += `
           <tr>
-            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">\${idx + 1}</td>
-            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[0] || ""}</td>
-            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">\${parts[1] || ""}</td>
-            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[2] || ""}</td>
-            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[3] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">${idx + 1}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">${parts[0] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">${parts[1] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">${parts[2] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">${parts[3] || ""}</td>
           </tr>
         `;
       });
@@ -740,21 +740,21 @@ function renderLivePreview() {
     bodyHtml += `
         </tbody>
       </table>
-      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${mode === "manual" && manualContent ? manualContent : "[Nội dung đề xuất và ý kiến chỉ đạo sẽ hiển thị tại đây sau khi nhấn Tạo văn bản...]"}</p>
+      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">${mode === "manual" && manualContent ? manualContent : "[Nội dung đề xuất và ý kiến chỉ đạo sẽ hiển thị tại đây sau khi nhấn Tạo văn bản...]"}</p>
     `;
   } else if (templateType === "quyetdinh") {
     bodyHtml += `
       <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 0.25em; text-indent: 0; text-transform: uppercase;">QUYẾT ĐỊNH</p>
-      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">\${trichYeu}</p>
+      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">${trichYeu}</p>
     `;
     
     if (mode === "manual" && manualContent) {
       const lines = manualContent.split("\n");
       lines.forEach(line => {
         if (line.trim().startsWith("Căn cứ")) {
-          bodyHtml += \`<p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">\${line.trim()}</p>\`;
+          bodyHtml += \`<p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">${line.trim()}</p>\`;
         } else {
-          bodyHtml += \`<p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${line.trim()}</p>\`;
+          bodyHtml += \`<p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">${line.trim()}</p>\`;
         }
       });
     } else {
@@ -767,9 +767,9 @@ function renderLivePreview() {
   } else {
     // Mẫu chung
     bodyHtml += `
-      <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 0.25em; text-indent: 0; text-transform: uppercase;">\${loaiVanBan}</p>
-      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">\${trichYeu}</p>
-      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${mode === "manual" && manualContent ? manualContent : "[Nội dung chi tiết văn bản sẽ được tự động soạn thảo tại đây sau khi nhấn Tạo văn bản...]"}</p>
+      <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 0.25em; text-indent: 0; text-transform: uppercase;">${loaiVanBan}</p>
+      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">${trichYeu}</p>
+      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">${mode === "manual" && manualContent ? manualContent : "[Nội dung chi tiết văn bản sẽ được tự động soạn thảo tại đây sau khi nhấn Tạo văn bản...]"}</p>
     `;
   }
 
@@ -780,13 +780,13 @@ function renderLivePreview() {
         <td style="border: none; width: 50%; text-align: left; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.3;">
           <strong>Nơi nhận:</strong><br/>
           - Như trên;<br/>
-          - Lưu: \${noiLuu}.
+          - Lưu: ${noiLuu}.
         </td>
         <td style="border: none; width: 50%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt; position: relative;">
-          <strong>\${chucVu}</strong>
+          <strong>${chucVu}</strong>
           <br/><br/><br/>
           <img src="/static/stamp.jpg" style="position: absolute; width: 110px; height: 110px; opacity: 0.75; mix-blend-mode: multiply; top: 10px; left: 25px; pointer-events: none; z-index: 5;" />
-          <strong>\${nguoiKy}</strong>
+          <strong>${nguoiKy}</strong>
         </td>
       </tr>
     </table>
