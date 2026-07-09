@@ -98,7 +98,8 @@
               Mẫu văn bản
               <select name="template_type" class="h-11 border border-[#bdb49f] bg-white px-3 text-base outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35">
                 <option value="default">Mẫu chung</option>
-                <option value="congvan">Công văn có bảng cán bộ</option>
+                <option value="congvan">Công văn</option>
+                <option value="quyetdinh">Quyết định</option>
               </select>
             </label>
             <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
@@ -164,7 +165,7 @@
                 Yêu cầu soạn thảo
                 <textarea name="user_request" rows="8" class="min-h-44 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Nhập yêu cầu, căn cứ, nội dung cần dự thảo...">Soạn thảo Nghị quyết của Hội đồng nhân dân thành phố Hà Nội. Quy định nội dung, mức chi hỗ trợ một số lực lượng trong công tác đảm bảo an ninh trật tự và thực hiện các nhiệm vụ chính trị thuộc Công an thành phố Hà Nội. Bao gồm các điều khoản: Điều 1 về Phạm vi điều chỉnh, Điều 2 về Đối tượng áp dụng, Điều 3 về Nội dung hỗ trợ (5.000.000 đồng/người/tháng), Điều 4 về Tổ chức thực hiện và Điều 5 về Hiệu lực thi hành từ ngày 11/05/2026.</textarea>
               </label>
-              <label class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
+              <label id="staff-list-container" class="flex flex-col gap-1.5 text-sm font-semibold text-[#3d372b]">
                 Danh sách cán bộ
                 <textarea name="staff_list" rows="5" class="min-h-32 border border-[#bdb49f] bg-white px-3 py-2 text-base leading-6 outline-none transition focus:border-[#7f1d1d] focus:ring-2 focus:ring-[#d4af37]/35" placeholder="Mỗi dòng: Họ tên | Năm sinh | Chức vụ | Ghi chú">Văn phòng Cơ quan Cảnh sát điều tra | 1995 | Cán bộ | Hỗ trợ 5 triệu/tháng
 Phòng Cảnh sát hình sự | 1992 | Chiến sĩ | Hỗ trợ 5 triệu/tháng</textarea>

@@ -631,12 +631,26 @@ generationModeRadios.forEach(radio => {
 
 
 
-loadSettings().catch((error) => {
-
-
+loadSettings().then(() => {
+  // Sau khi tải settings xong, kiểm tra ẩn hiện danh sách cán bộ
+  updateStaffListVisibility();
+}).catch((error) => {
   previewText.textContent = error.message;
-
-
 });
 
+const templateTypeSelect = document.querySelector('select[name="template_type"]');
+const staffListContainer = document.getElementById("staff-list-container");
 
+function updateStaffListVisibility() {
+  if (templateTypeSelect && staffListContainer) {
+    if (templateTypeSelect.value === "congvan") {
+      staffListContainer.style.display = "flex";
+    } else {
+      staffListContainer.style.display = "none";
+    }
+  }
+}
+
+if (templateTypeSelect) {
+  templateTypeSelect.addEventListener("change", updateStaffListVisibility);
+}

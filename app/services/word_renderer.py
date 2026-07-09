@@ -12,6 +12,7 @@ from app.database import BASE_DIR
 
 TEMPLATE_PATH = BASE_DIR / "data" / "template_nghidinh30.docx"
 CONGVAN_TEMPLATE_PATH = BASE_DIR / "data" / "template_congvan.docx"
+QUYETDINH_TEMPLATE_PATH = BASE_DIR / "data" / "template_quyetdinh.docx"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 
@@ -219,6 +220,8 @@ def render_word_document(data: dict) -> Path:
     template_type = data.get("template_type", "default")
     if template_type == "congvan":
         return render_congvan_document(data)
+    elif template_type == "quyetdinh":
+        return render_quyetdinh_document(data)
 
     template_path = ensure_default_template()
     today = datetime.now()
@@ -237,6 +240,114 @@ def render_word_document(data: dict) -> Path:
         "nguoi_ky": data.get("nguoi_ky", ""),
     }
     return render_template_to_output(template_path, context, prefix="van-ban")
+
+
+def ensure_quyetdinh_template() -> Path:
+    QUYETDINH_TEMPLATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if QUYETDINH_TEMPLATE_PATH.exists():
+        return QUYETDINH_TEMPLATE_PATH
+
+    document = Document()
+    set_document_defaults(document)
+
+    # 1. Header table (2 columns)
+    header = document.add_table(rows=1, cols=2)
+    header.autofit = True
+    left = header.cell(0, 0)
+    right = header.cell(0, 1)
+    
+    # Left: Agency Name and Document Code
+    p_left1 = left.paragraphs[0]
+    p_left1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cq = p_left1.add_run("{{ co_quan }}")
+    run_cq.bold = True
+    
+    p_left2 = left.add_paragraph()
+    p_left2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left2.add_run("-------------------")
+    
+    p_left3 = left.add_paragraph()
+    p_left3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_left3.add_run("Số: {{ so_ky_hieu }}")
+
+    # Right: National motto and date
+    p_right1 = right.paragraphs[0]
+    p_right1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_qh = p_right1.add_run("CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM")
+    run_qh.bold = True
+    
+    p_right2 = right.add_paragraph()
+    p_right2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_tn = p_right2.add_run("Độc lập - Tự do - Hạnh phúc")
+    run_tn.bold = True
+    
+    p_right3 = right.add_paragraph()
+    p_right3.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p_right3.add_run("-----------------------")
+    
+    p_right4 = right.add_paragraph()
+    p_right4.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_date = p_right4.add_run("{{ dia_danh }}, ngày {{ ngay }} tháng {{ thang }} năm {{ nam }}")
+    run_date.italic = True
+
+    document.add_paragraph("")
+    
+    # 2. Document type and subject
+    title = document.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_type = title.add_run("QUYẾT ĐỊNH\n")
+    run_type.bold = True
+    run_type.font.size = Pt(14)
+    run_subject = title.add_run("{{ trich_yeu }}")
+    run_subject.bold = True
+    
+    document.add_paragraph("")
+
+    # 3. Content body
+    document.add_paragraph("{{ noi_dung_ai_viet }}")
+
+    document.add_paragraph("")
+
+    # 4. Footer table
+    footer = document.add_table(rows=1, cols=2)
+    footer.cell(0, 0).text = "Nơi nhận:\n- Như trên;\n- Lưu: {{ noi_luu }}."
+    
+    # Right footer: Signer and Name
+    r_foot = footer.cell(0, 1)
+    p_foot1 = r_foot.paragraphs[0]
+    p_foot1.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_cv = p_foot1.add_run("{{ chuc_vu_nguoi_ky }}")
+    run_cv.bold = True
+    
+    r_foot.add_paragraph("")
+    r_foot.add_paragraph("")
+    
+    p_foot2 = r_foot.add_paragraph()
+    p_foot2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run_nk = p_foot2.add_run("{{ nguoi_ky }}")
+    run_nk.bold = True
+
+    document.save(QUYETDINH_TEMPLATE_PATH)
+    return QUYETDINH_TEMPLATE_PATH
+
+
+def render_quyetdinh_document(data: dict) -> Path:
+    template_path = ensure_quyetdinh_template()
+    today = datetime.now()
+    context = {
+        "co_quan": data.get("co_quan", ""),
+        "so_ky_hieu": data.get("so_ky_hieu", ""),
+        "dia_danh": data.get("dia_danh", ""),
+        "ngay": data.get("ngay", f"{today.day:02d}"),
+        "thang": data.get("thang", f"{today.month:02d}"),
+        "nam": data.get("nam", str(today.year)),
+        "trich_yeu": data.get("trich_yeu", ""),
+        "noi_dung_ai_viet": data.get("noi_dung_ai_viet", ""),
+        "noi_luu": data.get("noi_luu", "VT"),
+        "chuc_vu_nguoi_ky": data.get("chuc_vu_nguoi_ky", data.get("chuc_vu", "")),
+        "nguoi_ky": data.get("nguoi_ky", ""),
+    }
+    return render_template_to_output(template_path, context, prefix="quyet-dinh")
 
 
 def render_congvan_document(data: dict) -> Path:
