@@ -350,8 +350,18 @@ if (nguoiKyEl) {
 validateFormAndToggleGenerate();
 
 // Listen change/input để bật nút đúng yêu cầu
-form.addEventListener("input", () => validateFormAndToggleGenerate());
-form.addEventListener("change", () => validateFormAndToggleGenerate());
+form.addEventListener("input", () => {
+  validateFormAndToggleGenerate();
+  if (previewText.dataset.generated !== "true") {
+    renderLivePreview();
+  }
+});
+form.addEventListener("change", () => {
+  validateFormAndToggleGenerate();
+  if (previewText.dataset.generated !== "true") {
+    renderLivePreview();
+  }
+});
 
 function formatPreviewHtml(htmlString) {
   if (!htmlString) return "";
@@ -554,6 +564,7 @@ form.addEventListener("submit", async (event) => {
     const result = await response.json();
     previewText.innerHTML = formatPreviewHtml(result.preview_html) || "<p>Không có nội dung xem trước.</p>";
     previewText.dataset.text = previewText.textContent;
+    previewText.dataset.generated = "true"; // Đánh dấu đã sinh thật
     addPageDividers();
     setDownloadLink(result.file_url || "", result.file_name || "");
   } catch (error) {
@@ -620,22 +631,12 @@ copyButton.addEventListener("click", async () => {
 
 
 generationModeRadios.forEach(radio => {
-
-
-    radio.addEventListener('change', handleGenerationModeChange);
-
-
-});
-
-
-
-
-
-loadSettings().then(() => {
-  // Sau khi tải settings xong, kiểm tra ẩn hiện danh sách cán bộ
-  updateStaffListVisibility();
-}).catch((error) => {
-  previewText.textContent = error.message;
+    radio.addEventListener('change', (e) => {
+      handleGenerationModeChange(e);
+      if (previewText.dataset.generated !== "true") {
+        renderLivePreview();
+      }
+    });
 });
 
 const templateTypeSelect = document.querySelector('select[name="template_type"]');
@@ -651,6 +652,161 @@ function updateStaffListVisibility() {
   }
 }
 
-if (templateTypeSelect) {
-  templateTypeSelect.addEventListener("change", updateStaffListVisibility);
+function renderLivePreview() {
+  if (!templateTypeSelect) return;
+  const templateType = templateTypeSelect.value;
+  const coQuan = document.getElementById("ten_co_quan")?.value.trim() || "[Tên cơ quan]";
+  const soKyHieu = document.querySelector('input[name="so_ky_hieu"]')?.value.trim() || "[Số ký hiệu]";
+  const loaiVanBan = document.querySelector('input[name="loai_van_ban"]')?.value.trim() || "[Loại văn bản]";
+  const trichYeu = document.querySelector('input[name="trich_yeu"]')?.value.trim() || "[Trích yếu nội dung]";
+  const diaDanh = document.querySelector('input[name="dia_danh"]')?.value.trim() || "[Địa danh]";
+  const donViNhan = document.querySelector('input[name="don_vi_nhan"]')?.value.trim() || "[Đơn vị nhận]";
+  const noiLuu = document.querySelector('input[name="noi_luu"]')?.value.trim() || "VT";
+  const chucVu = document.getElementById("chuc_vu")?.value.trim() || "[Chức vụ]";
+  const nguoiKy = document.getElementById("ten_giam_doc")?.value.trim() || "[Họ tên người ký]";
+  const staffListRaw = document.querySelector('textarea[name="staff_list"]')?.value.trim() || "";
+  const manualContent = document.querySelector('textarea[name="manual_content"]')?.value.trim() || "";
+  const mode = document.querySelector('input[name="generation_mode"]:checked')?.value || "ai";
+
+  const today = new Date();
+  const dateStr = `${diaDanh}, ngày ${String(today.getDate()).padStart(2, '0')} tháng ${String(today.getMonth() + 1).padStart(2, '0')} năm ${today.getFullYear()}`;
+
+  // Build header table HTML
+  let headerHtml = `
+    <table style="border: none; width: 100%; border-collapse: collapse; margin-bottom: 1.5em;">
+      <tr>
+        <td style="border: none; width: 45%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
+          <strong>${coQuan}</strong>
+          \${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}
+          <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
+          Số: ${soKyHieu}
+        </td>
+        <td style="border: none; width: 55%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
+          <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
+          <strong>Độc lập - Tự do - Hạnh phúc</strong>
+          <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
+          <span style="font-style: italic;">\${dateStr}</span>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  // Build body HTML
+  let bodyHtml = "";
+  if (templateType === "congvan") {
+    bodyHtml += `
+      <p style="text-align: center; font-weight: bold; margin-bottom: 1.5em; text-indent: 0;">Kính gửi: \${donViNhan}.</p>
+      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">Về việc cử cán bộ tham gia hoạt động: cử các đồng chí có tên sau đây:</p>
+      <table style="border-collapse: collapse; width: 100%; margin: 1em 0 1.5em 0;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid black; padding: 6px 8px; font-weight: bold; text-align: center;">TT</th>
+            <th style="border: 1px solid black; padding: 6px 8px; font-weight: bold; text-align: center;">Họ và tên</th>
+            <th style="border: 1px solid black; padding: 6px 8px; font-weight: bold; text-align: center;">Năm sinh</th>
+            <th style="border: 1px solid black; padding: 6px 8px; font-weight: bold; text-align: center;">Chức vụ</th>
+            <th style="border: 1px solid black; padding: 6px 8px; font-weight: bold; text-align: center;">Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // Parse staff list
+    const staffLines = staffListRaw.split("\n").filter(line => line.trim());
+    if (staffLines.length > 0) {
+      staffLines.forEach((line, idx) => {
+        const parts = line.split("|").map(p => p.trim());
+        bodyHtml += `
+          <tr>
+            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">\${idx + 1}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[0] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">\${parts[1] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[2] || ""}</td>
+            <td style="border: 1px solid black; padding: 6px 8px;">\${parts[3] || ""}</td>
+          </tr>
+        `;
+      });
+    } else {
+      bodyHtml += `
+        <tr>
+          <td style="border: 1px solid black; padding: 6px 8px; text-align: center;">1</td>
+          <td style="border: 1px solid black; padding: 6px 8px; color: #888;">[Họ tên cán bộ]</td>
+          <td style="border: 1px solid black; padding: 6px 8px; text-align: center; color: #888;">[Năm sinh]</td>
+          <td style="border: 1px solid black; padding: 6px 8px; color: #888;">[Chức vụ]</td>
+          <td style="border: 1px solid black; padding: 6px 8px; color: #888;">[Ghi chú]</td>
+        </tr>
+      `;
+    }
+
+    bodyHtml += `
+        </tbody>
+      </table>
+      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${mode === "manual" && manualContent ? manualContent : "[Nội dung đề xuất và ý kiến chỉ đạo sẽ hiển thị tại đây sau khi nhấn Tạo văn bản...]"}</p>
+    `;
+  } else if (templateType === "quyetdinh") {
+    bodyHtml += `
+      <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 0.25em; text-indent: 0; text-transform: uppercase;">QUYẾT ĐỊNH</p>
+      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">\${trichYeu}</p>
+    `;
+    
+    if (mode === "manual" && manualContent) {
+      const lines = manualContent.split("\n");
+      lines.forEach(line => {
+        if (line.trim().startsWith("Căn cứ")) {
+          bodyHtml += \`<p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">\${line.trim()}</p>\`;
+        } else {
+          bodyHtml += \`<p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${line.trim()}</p>\`;
+        }
+      });
+    } else {
+      bodyHtml += `
+        <p style="font-style: italic; text-indent: 0; text-align: justify; margin-bottom: 0.25em; line-height: 1.5;">Căn cứ các quy định pháp luật liên quan và thẩm quyền ban hành...</p>
+        <p style="text-align: center; font-weight: bold; margin-top: 1em; margin-bottom: 1em; text-indent: 0;">QUYẾT ĐỊNH:</p>
+        <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">[Nội dung chi tiết các Điều khoản Quyết định sẽ được tự động soạn thảo tại đây sau khi nhấn Tạo văn bản...]</p>
+      `;
+    }
+  } else {
+    // Mẫu chung
+    bodyHtml += `
+      <p style="text-align: center; font-weight: bold; font-size: 14pt; margin-bottom: 0.25em; text-indent: 0; text-transform: uppercase;">\${loaiVanBan}</p>
+      <p style="text-align: center; font-weight: bold; font-size: 13pt; margin-bottom: 1.5em; text-indent: 0;">\${trichYeu}</p>
+      <p style="text-indent: 1.27cm; text-align: justify; line-height: 1.5;">\${mode === "manual" && manualContent ? manualContent : "[Nội dung chi tiết văn bản sẽ được tự động soạn thảo tại đây sau khi nhấn Tạo văn bản...]"}</p>
+    `;
+  }
+
+  // Build footer/signer HTML
+  let footerHtml = `
+    <table style="border: none; width: 100%; border-collapse: collapse; margin-top: 2em;">
+      <tr>
+        <td style="border: none; width: 50%; text-align: left; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.3;">
+          <strong>Nơi nhận:</strong><br/>
+          - Như trên;<br/>
+          - Lưu: \${noiLuu}.
+        </td>
+        <td style="border: none; width: 50%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt; position: relative;">
+          <strong>\${chucVu}</strong>
+          <br/><br/><br/>
+          <img src="/static/stamp.jpg" style="position: absolute; width: 110px; height: 110px; opacity: 0.75; mix-blend-mode: multiply; top: 10px; left: 25px; pointer-events: none; z-index: 5;" />
+          <strong>\${nguoiKy}</strong>
+        </td>
+      </tr>
+    </table>
+  `;
+
+  previewText.innerHTML = headerHtml + bodyHtml + footerHtml;
+  addPageDividers();
 }
+
+if (templateTypeSelect) {
+  templateTypeSelect.addEventListener("change", () => {
+    previewText.dataset.generated = "false"; // Reset
+    updateStaffListVisibility();
+    renderLivePreview();
+  });
+}
+
+loadSettings().then(() => {
+  updateStaffListVisibility();
+  renderLivePreview();
+}).catch((error) => {
+  previewText.textContent = error.message;
+});
