@@ -397,7 +397,7 @@ function formatPreviewHtml(htmlString) {
         cell.style.verticalAlign = "top";
         
         // Thay thế các đường gạch nối (---) thành đường kẻ mảnh thực tế
-        cell.innerHTML = cell.innerHTML.replace(/----+/g, '<div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>');
+        cell.innerHTML = cell.innerHTML.replace(/----+/g, '<span style="display: inline-block; border-top: 1.5px solid black; width: 100px; margin: 4px 0; vertical-align: middle;"></span>');
       });
 
       // Nếu là bảng footer (chứa chữ ký), chúng ta chèn con dấu đè lên ô bên phải
@@ -677,14 +677,14 @@ function renderLivePreview() {
       <tr>
         <td style="border: none; width: 45%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>${coQuan}</strong>
-          ${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}
-          <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
+          ${templateType === 'congvan' ? '<br/><strong>Đoàn công tác</strong>' : ''}<br/>
+          <span style="display: inline-block; border-top: 1.5px solid black; width: 60px; margin: 4px 0; vertical-align: middle;"></span><br/>
           Số: ${soKyHieu}
         </td>
         <td style="border: none; width: 55%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
-          <strong>Độc lập - Tự do - Hạnh phúc</strong>
-          <div style="border-bottom: 1.5px solid black; margin: 4px auto; width: 40%; max-width: 120px;"></div>
+          <strong>Độc lập - Tự do - Hạnh phúc</strong><br/>
+          <span style="display: inline-block; border-top: 1.5px solid black; width: 140px; margin: 4px 0; vertical-align: middle;"></span><br/>
           <span style="font-style: italic;">${dateStr}</span>
         </td>
       </tr>
