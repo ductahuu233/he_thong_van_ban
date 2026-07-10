@@ -513,9 +513,8 @@ function paginatePreview() {
 
   // Create a temporary container to measure heights accurately
   const temp = document.createElement("div");
-  temp.style.width = "210mm";
-  temp.style.padding = "20mm 15mm 20mm 30mm";
-  temp.style.boxSizing = "border-box";
+  temp.className = "docx-page";
+  temp.style.height = "auto";
   temp.style.position = "absolute";
   temp.style.visibility = "hidden";
   temp.style.top = "-9999px";

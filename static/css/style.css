@@ -156,7 +156,7 @@ button {
 .docx-preview {
   background: #ffffff;
   border: 1px solid #c8bfa8;
-  padding: 20mm 15mm 20mm 30mm; /* Lề chuẩn Nghị định 30: Trên 20mm, Phải 15mm, Dưới 20mm, Trái 30mm */
+  padding: 20mm 20mm 20mm 30mm; /* Lề chuẩn Nghị định 30: Trên 20mm, Phải 20mm, Dưới 20mm, Trái 30mm */
   box-shadow: 
     0 10px 30px rgba(0,0,0,0.1),
     0 1px 3px rgba(0,0,0,0.05);
@@ -247,7 +247,7 @@ button {
 .docx-page {
   background: #ffffff;
   border: 1px solid #c8bfa8;
-  padding: 20mm 15mm 20mm 30mm; /* Lề chuẩn Nghị định 30: Trên 20mm, Phải 15mm, Dưới 20mm, Trái 30mm */
+  padding: 20mm 20mm 20mm 30mm; /* Lề chuẩn Nghị định 30: Trên 20mm, Phải 20mm, Dưới 20mm, Trái 30mm */
   box-shadow: 
     0 10px 30px rgba(0,0,0,0.1),
     0 1px 3px rgba(0,0,0,0.05);
