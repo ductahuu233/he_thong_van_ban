@@ -496,52 +496,90 @@ function formatPreviewHtml(htmlString) {
   return doc.body.innerHTML;
 }
 
-function addPageDividers() {
-  const existing = previewText.querySelectorAll(".page-break-divider");
-  existing.forEach(el => el.remove());
+function paginatePreview() {
+  const container = document.getElementById("preview-container");
+  if (!container) return;
 
-  previewText.style.position = "relative";
-  const totalHeightPx = previewText.scrollHeight;
-
-  const dummy = document.createElement("div");
-  dummy.style.height = "297mm";
-  dummy.style.visibility = "hidden";
-  dummy.style.position = "absolute";
-  previewText.appendChild(dummy);
-  const pageHeightPx = dummy.offsetHeight;
-  previewText.removeChild(dummy);
-
-  if (!pageHeightPx || pageHeightPx <= 0) return;
-  const numPages = Math.ceil(totalHeightPx / pageHeightPx);
+  const rawHtml = container.innerHTML;
   
-  for (let i = 1; i < numPages; i++) {
-    const divider = document.createElement("div");
-    divider.className = "page-break-divider";
-    divider.style.position = "absolute";
-    divider.style.left = "0";
-    divider.style.right = "0";
-    divider.style.top = `${i * pageHeightPx}px`;
-    divider.style.borderTop = "2px dashed #a8a090";
-    divider.style.height = "0";
-    divider.style.pointerEvents = "none";
-    divider.style.zIndex = "10";
+  // Clear container styling to act as a transparent wrapper for pages
+  container.innerHTML = "";
+  container.style.background = "transparent";
+  container.style.border = "none";
+  container.style.boxShadow = "none";
+  container.style.padding = "0";
+  container.style.width = "auto";
+  container.style.minHeight = "auto";
+
+  // Create a temporary container to measure heights accurately
+  const temp = document.createElement("div");
+  temp.style.width = "210mm";
+  temp.style.padding = "20mm 15mm 20mm 30mm";
+  temp.style.boxSizing = "border-box";
+  temp.style.position = "absolute";
+  temp.style.visibility = "hidden";
+  temp.style.top = "-9999px";
+  temp.innerHTML = rawHtml;
+  document.body.appendChild(temp);
+
+  // Extract all child elements
+  const elements = Array.from(temp.children);
+  
+  // Printable height in pixels (257mm at 96 DPI)
+  // 257mm = 971px
+  const maxPageHeight = 970;
+
+  let pages = [];
+  let currentPageElements = [];
+  let currentHeight = 0;
+
+  elements.forEach((el) => {
+    // Measure element height inside the temp container
+    const elHeight = el.getBoundingClientRect().height;
     
-    const label = document.createElement("span");
-    label.textContent = `Hết Trang ${i} / Sang Trang ${i + 1}`;
-    label.style.position = "absolute";
-    label.style.right = "20px";
-    label.style.top = "-10px";
-    label.style.background = "#fffdf8";
-    label.style.padding = "2px 8px";
-    label.style.fontSize = "9pt";
-    label.style.color = "#8b7e66";
-    label.style.fontFamily = "sans-serif";
-    label.style.border = "1px solid #c8bfa8";
-    label.style.borderRadius = "4px";
-    
-    divider.appendChild(label);
-    previewText.appendChild(divider);
+    // Check if adding this element exceeds the page height
+    if (currentHeight + elHeight > maxPageHeight && currentPageElements.length > 0) {
+      pages.push(currentPageElements);
+      currentPageElements = [el.cloneNode(true)];
+      currentHeight = elHeight;
+    } else {
+      currentPageElements.push(el.cloneNode(true));
+      currentHeight += elHeight;
+    }
+  });
+
+  if (currentPageElements.length > 0) {
+    pages.push(currentPageElements);
   }
+
+  // Clean up temp
+  document.body.removeChild(temp);
+
+  // Render separate A4 pages
+  pages.forEach((pageEls, index) => {
+    const pageNum = index + 1;
+    
+    const pageDiv = document.createElement("div");
+    pageDiv.className = "docx-page";
+    
+    // If page >= 2, add the page number at the top center
+    if (pageNum >= 2) {
+      const pageNumDiv = document.createElement("div");
+      pageNumDiv.className = "docx-page-number";
+      pageNumDiv.textContent = pageNum;
+      pageDiv.appendChild(pageNumDiv);
+    }
+    
+    const pageContent = document.createElement("div");
+    pageContent.className = "docx-page-content";
+    
+    pageEls.forEach((el) => {
+      pageContent.appendChild(el);
+    });
+    
+    pageDiv.appendChild(pageContent);
+    container.appendChild(pageDiv);
+  });
 }
 
 let triggerDownloadAfterGenerate = false;
@@ -574,7 +612,7 @@ form.addEventListener("submit", async (event) => {
     previewText.innerHTML = formatPreviewHtml(result.preview_html) || "<p>Không có nội dung xem trước.</p>";
     previewText.dataset.text = previewText.textContent;
     previewText.dataset.generated = "true"; // Đánh dấu đã sinh thật
-    addPageDividers();
+    paginatePreview();
     setDownloadLink(result.file_url || "", result.file_name || "");
 
     if (triggerDownloadAfterGenerate) {
@@ -713,8 +751,7 @@ function renderLivePreview() {
         </td>
         <td style="border: none; width: 67%; text-align: center; vertical-align: top; font-family: 'Times New Roman', Times, serif; font-size: 13pt;">
           <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
-          <strong>Độc lập - Tự do - Hạnh phúc</strong><br/>
-          <span style="display: inline-block; border-top: 1.5px solid black; width: 140px; margin: 4px 0; vertical-align: middle;"></span><br/>
+          <span style="display: inline-block; border-bottom: 1.5px solid black; padding-bottom: 2px; margin-bottom: 4px;"><strong>Độc lập - Tự do - Hạnh phúc</strong></span><br/>
           <span style="font-style: italic;">${dateStr}</span>
         </td>
       </tr>
@@ -823,7 +860,7 @@ function renderLivePreview() {
   `;
 
   previewText.innerHTML = headerHtml + bodyHtml + footerHtml;
-  addPageDividers();
+  paginatePreview();
 }
 
 if (templateTypeSelect) {
