@@ -612,6 +612,7 @@ form.addEventListener("submit", async (event) => {
     previewText.dataset.text = previewText.textContent;
     previewText.dataset.generated = "true"; // Đánh dấu đã sinh thật
     paginatePreview();
+    autoFitPageWidth();
     setDownloadLink(result.file_url || "", result.file_name || "");
 
     if (triggerDownloadAfterGenerate) {
@@ -883,12 +884,41 @@ if (templateTypeSelect) {
 
     updateStaffListVisibility();
     renderLivePreview();
+    autoFitPageWidth();
   });
+}
+
+function autoFitPageWidth() {
+  const previewContainer = document.querySelector(".docx-preview-container");
+  const zoomSlider = document.getElementById("zoom-slider");
+  const zoomValue = document.getElementById("zoom-value");
+  const preview = document.getElementById("preview-container");
+  
+  if (!previewContainer || !zoomSlider || !zoomValue || !preview) return;
+
+  const containerWidth = previewContainer.clientWidth;
+  const style = window.getComputedStyle(previewContainer);
+  const paddingLeft = parseFloat(style.paddingLeft) || 0;
+  const paddingRight = parseFloat(style.paddingRight) || 0;
+  const availableWidth = containerWidth - paddingLeft - paddingRight - 16; // 16px buffer for borders & safety
+  
+  const a4Width = 794; // approx A4 width in pixels (210mm)
+  
+  if (availableWidth > 0) {
+    let fitZoom = Math.round((availableWidth / a4Width) * 100);
+    // Clamp zoom between 50% and 150%
+    fitZoom = Math.max(50, Math.min(150, fitZoom));
+    
+    zoomSlider.value = fitZoom;
+    zoomValue.textContent = `${fitZoom}%`;
+    preview.style.zoom = fitZoom / 100;
+  }
 }
 
 loadSettings().then(() => {
   updateStaffListVisibility();
   renderLivePreview();
+  autoFitPageWidth();
 }).catch((error) => {
   previewText.textContent = error.message;
 });
@@ -906,4 +936,8 @@ if (zoomSlider && zoomValue) {
     }
   });
 }
+
+// Window resize handler
+window.addEventListener("resize", autoFitPageWidth);
+
 
