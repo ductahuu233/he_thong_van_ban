@@ -348,29 +348,10 @@ button {
   width: 100%;
 }
 
-.input-icon {
-  position: absolute;
-  left: 12px;
-  width: 18px;
-  height: 18px;
-  color: #ab9e84;
-  pointer-events: none;
-  transition: all 0.2s ease;
-}
-
 .input-wrapper input,
 .input-wrapper select {
   width: 100%;
-  padding-left: 40px !important; /* Space for the icon! */
-}
-
-/* Change icon color dynamically when input gets focus */
-.input-wrapper input:focus ~ .input-icon,
-.input-wrapper select:focus ~ .input-icon,
-.input-wrapper input:focus + .input-icon,
-.input-wrapper select:focus + .input-icon {
-  color: #7f1d1d;
-  transform: scale(1.05);
+  padding-left: 0.75rem !important;
 }
 
 
