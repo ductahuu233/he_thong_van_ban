@@ -8,7 +8,7 @@ from app.core.config import BASE_DIR
 from app.core.database import get_db
 from app.models import DocumentHistory, UserSettings
 from app.models.schemas import SettingsUpdate, GenerationRequest
-from app.services.ai_service import DEFAULT_SYSTEM_PROMPT, generate_ai_text
+from app.services.ai_service import DEFAULT_SYSTEM_PROMPT, generate_ai_text, ocr_image_via_llm
 from app.services.file_service import extract_text_from_upload
 from app.services.doc_generator import render_word_document
 
@@ -222,3 +222,16 @@ async def generate_document(
         "file_url": f"/outputs/{output_path.name}",
         "file_name": output_path.name,
     }
+
+
+@router.post("/api/scan-document")
+async def scan_document(file: UploadFile = FastApiFile(...)) -> dict[str, str]:
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Chỉ hỗ trợ quét các định dạng file hình ảnh (PNG, JPG, JPEG).")
+    try:
+        image_bytes = await file.read()
+        extracted_text = await ocr_image_via_llm(image_bytes, file.content_type)
+        return {"text": extracted_text}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Không thể nhận diện văn bản từ hình ảnh: {exc}") from exc
+

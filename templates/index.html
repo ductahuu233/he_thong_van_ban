@@ -31,9 +31,18 @@
 
       <section class="grid flex-1 gap-4 py-4 lg:grid-cols-[2fr_3fr]">
         <form id="document-form" class="premium-card flex flex-col">
-          <div class="border-b border-[#d7d0bf] bg-[#f8f3e7] px-4 py-3 sm:px-5">
-            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#7f1d1d]">Phiếu nhập liệu</p>
-            <h2 class="mt-1 text-lg font-bold text-[#211f1c]">Thông tin văn bản</h2>
+          <div class="border-b border-[#d7d0bf] bg-[#f8f3e7] px-4 py-3 sm:px-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#7f1d1d]">Phiếu nhập liệu</p>
+              <h2 class="mt-1 text-lg font-bold text-[#211f1c]">Thông tin văn bản</h2>
+            </div>
+            <div>
+              <button id="scan-doc-btn" type="button" class="inline-flex items-center gap-1.5 rounded border border-[#7f1d1d] bg-white px-3 py-1.5 text-xs font-semibold text-[#7f1d1d] transition hover:bg-[#7f1d1d] hover:text-white">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Quét ảnh (OCR)
+              </button>
+              <input type="file" id="scan-doc-input" accept="image/*" class="hidden" />
+            </div>
           </div>
 
           <div class="grid gap-4 p-4 sm:grid-cols-2 sm:p-5">
@@ -247,6 +256,40 @@ Nghị quyết này đã được Hội đồng nhân dân thành phố Hà Nộ
         </aside>
       </section>
     </main>
+
+    <!-- Modal loading OCR -->
+    <div id="ocr-loading-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="premium-card max-w-md w-full bg-white p-6 rounded shadow-xl text-center flex flex-col items-center gap-4">
+        <div class="h-12 w-12 animate-spin rounded-full border-4 border-stone-200 border-t-[#7f1d1d]"></div>
+        <h3 class="text-lg font-bold text-[#7f1d1d]">Đang phân tích hình ảnh...</h3>
+        <p class="text-sm text-stone-600">Trí tuệ nhân tạo (AI) đang tiến hành nhận diện chữ tiếng Việt từ văn bản quét. Quá trình này có thể mất vài giây.</p>
+      </div>
+    </div>
+
+    <!-- Modal kết quả OCR -->
+    <div id="ocr-result-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div class="premium-card max-w-2xl w-full bg-white flex flex-col rounded shadow-2xl overflow-hidden max-h-[90vh]">
+        <div class="border-b border-[#d7d0bf] bg-[#f8f3e7] px-6 py-4 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-[#7f1d1d]">Kết quả nhận diện văn bản</h3>
+          <button id="ocr-close-btn" type="button" class="text-stone-500 hover:text-stone-800 text-2xl font-bold">&times;</button>
+        </div>
+        <div class="p-6 flex-1 overflow-y-auto flex flex-col gap-4">
+          <p class="text-sm text-stone-600">Dưới đây là nội dung văn bản tiếng Việt được trích xuất từ ảnh quét. Bạn có thể chỉnh sửa trực tiếp hoặc điền vào phiếu nhập liệu:</p>
+          <textarea id="ocr-result-text" class="w-full min-h-64 border border-[#bdb49f] bg-stone-50 p-4 text-sm leading-6 outline-none focus:border-[#7f1d1d] focus:ring-1 focus:ring-[#7f1d1d]" placeholder="Chưa có nội dung nhận diện..."></textarea>
+        </div>
+        <div class="border-t border-[#e2dbc9] bg-stone-50 px-6 py-4 grid gap-2 sm:grid-cols-3">
+          <button id="ocr-fill-request-btn" type="button" class="inline-flex min-h-10 items-center justify-center bg-[#7f1d1d] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#991b1b]">
+            Điền vào yêu cầu soạn thảo
+          </button>
+          <button id="ocr-fill-content-btn" type="button" class="inline-flex min-h-10 items-center justify-center bg-[#7f1d1d] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#991b1b]">
+            Điền vào nội dung chi tiết
+          </button>
+          <button id="ocr-copy-btn" type="button" class="inline-flex min-h-10 items-center justify-center border border-[#7f1d1d] bg-white px-3 py-1.5 text-xs font-bold text-[#7f1d1d] transition hover:bg-[#fff4df]">
+            Sao chép văn bản
+          </button>
+        </div>
+      </div>
+    </div>
 
     <script src="/static/js/app.js?v=20260711-2"></script>
   </body>

@@ -960,5 +960,134 @@ if (previewContainerEl) {
   resizeObserver.observe(previewContainerEl);
 }
 
+// OCR Scanning Frontend Logic
+const scanDocBtn = document.getElementById("scan-doc-btn");
+const scanDocInput = document.getElementById("scan-doc-input");
+const ocrLoadingModal = document.getElementById("ocr-loading-modal");
+const ocrResultModal = document.getElementById("ocr-result-modal");
+const ocrResultText = document.getElementById("ocr-result-text");
+const ocrCloseBtn = document.getElementById("ocr-close-btn");
+const ocrFillRequestBtn = document.getElementById("ocr-fill-request-btn");
+const ocrFillContentBtn = document.getElementById("ocr-fill-content-btn");
+const ocrCopyBtn = document.getElementById("ocr-copy-btn");
+
+if (scanDocBtn && scanDocInput) {
+  scanDocBtn.addEventListener("click", () => {
+    scanDocInput.click();
+  });
+
+  scanDocInput.addEventListener("change", async () => {
+    const file = scanDocInput.files[0];
+    if (!file) return;
+
+    // Show loading modal
+    if (ocrLoadingModal) {
+      ocrLoadingModal.classList.remove("hidden");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/scan-document", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "Không thể nhận diện hình ảnh.");
+      }
+
+      const result = await response.json();
+
+      // Show result modal and populate text
+      if (ocrResultText) {
+        ocrResultText.value = result.text || "";
+      }
+      if (ocrResultModal) {
+        ocrResultModal.classList.remove("hidden");
+      }
+    } catch (error) {
+      alert(`Lỗi quét tài liệu: ${error.message}`);
+    } finally {
+      // Hide loading modal & reset input
+      if (ocrLoadingModal) {
+        ocrLoadingModal.classList.add("hidden");
+      }
+      scanDocInput.value = "";
+    }
+  });
+}
+
+// Modal actions
+if (ocrCloseBtn && ocrResultModal) {
+  ocrCloseBtn.addEventListener("click", () => {
+    ocrResultModal.classList.add("hidden");
+  });
+}
+
+if (ocrFillRequestBtn && ocrResultModal) {
+  ocrFillRequestBtn.addEventListener("click", () => {
+    const userRequestTextarea = document.getElementsByName("user_request")[0];
+    if (userRequestTextarea && ocrResultText) {
+      userRequestTextarea.value = ocrResultText.value;
+      userRequestTextarea.dispatchEvent(new Event("input"));
+    }
+    
+    // Switch to AI mode
+    const aiRadio = document.querySelector('input[name="generation_mode"][value="ai"]');
+    if (aiRadio) {
+      aiRadio.checked = true;
+      handleGenerationModeChange();
+      if (previewText.dataset.generated !== "true") {
+        renderLivePreview();
+      }
+    }
+    
+    ocrResultModal.classList.add("hidden");
+  });
+}
+
+if (ocrFillContentBtn && ocrResultModal) {
+  ocrFillContentBtn.addEventListener("click", () => {
+    const manualContentTextarea = document.getElementsByName("manual_content")[0];
+    if (manualContentTextarea && ocrResultText) {
+      manualContentTextarea.value = ocrResultText.value;
+      manualContentTextarea.dispatchEvent(new Event("input"));
+    }
+
+    // Switch to manual mode
+    const manualRadio = document.querySelector('input[name="generation_mode"][value="manual"]');
+    if (manualRadio) {
+      manualRadio.checked = true;
+      handleGenerationModeChange();
+      if (previewText.dataset.generated !== "true") {
+        renderLivePreview();
+      }
+    }
+
+    ocrResultModal.classList.add("hidden");
+  });
+}
+
+if (ocrCopyBtn && ocrResultText) {
+  ocrCopyBtn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(ocrResultText.value);
+      const originalText = ocrCopyBtn.textContent;
+      ocrCopyBtn.textContent = "Đã sao chép!";
+      ocrCopyBtn.disabled = true;
+      setTimeout(() => {
+        ocrCopyBtn.textContent = originalText;
+        ocrCopyBtn.disabled = false;
+      }, 1500);
+    } catch (err) {
+      alert("Không thể sao chép văn bản.");
+    }
+  });
+}
+
+
 
 

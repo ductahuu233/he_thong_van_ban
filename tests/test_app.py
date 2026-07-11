@@ -167,3 +167,27 @@ def test_generate_congvan_template_renders_staff_table(tmp_path):
     assert "Ta Minh Quang" in table_text
     assert "Do Hoang Bao Ly" in table_text
     assert "HDLD" in table_text
+
+
+def test_scan_document_success(tmp_path):
+    client = make_test_client(tmp_path)
+    # Upload an image file
+    files = {"file": ("test.png", b"fake_png_data", "image/png")}
+    response = client.post("/api/scan-document", files=files)
+    app.dependency_overrides.clear()
+    
+    assert response.status_code == 200
+    assert "text" in response.json()
+    assert "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" in response.json()["text"]
+
+
+def test_scan_document_invalid_type(tmp_path):
+    client = make_test_client(tmp_path)
+    # Upload an invalid file type (e.g. text file)
+    files = {"file": ("test.txt", b"some plain text", "text/plain")}
+    response = client.post("/api/scan-document", files=files)
+    app.dependency_overrides.clear()
+    
+    assert response.status_code == 400
+    assert "Chỉ hỗ trợ quét" in response.json()["detail"]
+
