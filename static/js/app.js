@@ -906,8 +906,8 @@ function autoFitPageWidth() {
   
   if (availableWidth > 0) {
     let fitZoom = Math.round((availableWidth / a4Width) * 100);
-    // Clamp zoom between 50% and 150%
-    fitZoom = Math.max(50, Math.min(150, fitZoom));
+    // Clamp zoom between 50% and 200% to support large screen resolutions
+    fitZoom = Math.max(50, Math.min(200, fitZoom));
     
     zoomSlider.value = fitZoom;
     zoomValue.textContent = `${fitZoom}%`;
@@ -937,7 +937,14 @@ if (zoomSlider && zoomValue) {
   });
 }
 
-// Window resize handler
-window.addEventListener("resize", autoFitPageWidth);
+// Robust ResizeObserver to handle Tailwind CDN layout changes and viewport resizing
+const previewContainerEl = document.querySelector(".docx-preview-container");
+if (previewContainerEl) {
+  const resizeObserver = new ResizeObserver(() => {
+    autoFitPageWidth();
+  });
+  resizeObserver.observe(previewContainerEl);
+}
+
 
 
