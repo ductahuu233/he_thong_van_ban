@@ -896,18 +896,32 @@ function autoFitPageWidth() {
   
   if (!previewContainer || !zoomSlider || !zoomValue || !preview) return;
 
+  // Get available width
   const containerWidth = previewContainer.clientWidth;
   const style = window.getComputedStyle(previewContainer);
   const paddingLeft = parseFloat(style.paddingLeft) || 0;
   const paddingRight = parseFloat(style.paddingRight) || 0;
-  const availableWidth = containerWidth - paddingLeft - paddingRight - 16; // 16px buffer for borders & safety
+  const availableWidth = containerWidth - paddingLeft - paddingRight - 24; // 24px buffer
   
-  const a4Width = 794; // approx A4 width in pixels (210mm)
+  // Get available height
+  const containerHeight = previewContainer.clientHeight;
+  const paddingTop = parseFloat(style.paddingTop) || 0;
+  const paddingBottom = parseFloat(style.paddingBottom) || 0;
+  const availableHeight = containerHeight - paddingTop - paddingBottom - 24; // 24px buffer
   
-  if (availableWidth > 0) {
-    let fitZoom = Math.round((availableWidth / a4Width) * 100);
-    // Clamp zoom between 50% and 200% to support large screen resolutions
-    fitZoom = Math.max(50, Math.min(200, fitZoom));
+  const a4Width = 794;  // approx A4 width in pixels (210mm)
+  const a4Height = 1122; // approx A4 height in pixels (297mm)
+  
+  if (availableWidth > 0 && availableHeight > 0) {
+    const widthZoom = availableWidth / a4Width;
+    const heightZoom = availableHeight / a4Height;
+    
+    // Choose the minimum zoom to fit the entire page vertically and horizontally without scrolling
+    let idealZoom = Math.min(widthZoom, heightZoom);
+    let fitZoom = Math.round(idealZoom * 100);
+    
+    // Clamp zoom between 40% and 200%
+    fitZoom = Math.max(40, Math.min(200, fitZoom));
     
     zoomSlider.value = fitZoom;
     zoomValue.textContent = `${fitZoom}%`;
