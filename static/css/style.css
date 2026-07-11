@@ -312,3 +312,65 @@ button {
   margin-bottom: 0.5em;
 }
 
+/* Premium Form Layout styling */
+.form-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7f1d1d;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #e5dfd0;
+  grid-column: span 2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.input-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b4436;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  color: #ab9e84;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+  width: 100%;
+  padding-left: 40px !important; /* Space for the icon! */
+}
+
+/* Change icon color dynamically when input gets focus */
+.input-wrapper input:focus ~ .input-icon,
+.input-wrapper select:focus ~ .input-icon,
+.input-wrapper input:focus + .input-icon,
+.input-wrapper select:focus + .input-icon {
+  color: #7f1d1d;
+  transform: scale(1.05);
+}
+
+
