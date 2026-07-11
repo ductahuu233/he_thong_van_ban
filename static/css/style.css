@@ -314,13 +314,13 @@ button {
 
 /* Premium Form Layout styling */
 .form-section-title {
-  font-size: 0.85rem;
+  font-size: 1.15rem !important; /* Larger section header font */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #7f1d1d;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
   padding-bottom: 0.35rem;
   border-bottom: 2px solid #e5dfd0;
   grid-column: span 2;
@@ -332,11 +332,11 @@ button {
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .input-label {
-  font-size: 0.85rem;
+  font-size: 1rem !important; /* Larger label font */
   font-weight: 600;
   color: #4b4436;
 }
@@ -349,9 +349,30 @@ button {
 }
 
 .input-wrapper input,
-.input-wrapper select {
+.input-wrapper select,
+#document-form input[type="text"],
+#document-form input:not([type="file"]),
+#document-form select {
   width: 100%;
+  height: 3rem !important; /* Increased field height for legibility */
+  font-size: 1.05rem !important; /* Larger font size */
   padding-left: 0.75rem !important;
+  border-radius: 4px;
 }
 
+#document-form textarea {
+  font-size: 1.05rem !important; /* Larger text size for draft contents */
+  line-height: 1.6 !important;
+  border-radius: 4px;
+}
 
+#document-form label.flex-col {
+  gap: 0.5rem !important;
+}
+
+#document-form label.flex-col span,
+#document-form label.flex-col {
+  font-size: 1rem !important;
+  font-weight: 600;
+  color: #4b4436;
+}
